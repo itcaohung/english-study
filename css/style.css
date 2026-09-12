@@ -292,12 +292,12 @@ main:focus {
   flex-shrink:0
 }
 .avatar.small {
-  width:35px;
-  height:35px;
+  width:44px;
+  height:44px;
   font-size:12px;
   margin-left:6px
 }
-.avatar img,.learner-avatar img,.avatar-options img { width:100%; height:100%; object-fit:cover; border-radius:inherit; display:block; }
+.avatar img,.learner-avatar img,.avatar-options img { width:100%; height:100%; object-fit:contain; border-radius:inherit; display:block; }
 .avatar-pill { display:inline-flex; align-items:center; gap:6px; }.avatar-pill img { width:20px; height:20px; border-radius:50%; object-fit:cover; }
 .workspace {
   margin-left:var(--sidebar)
@@ -2906,8 +2906,8 @@ body.modal-open { overflow:hidden; }
     display:none
   }
   .avatar.small {
-    width:28px;
-    height:28px;
+    width:36px;
+    height:36px;
     font-size:10px;
     margin-left:0
   }
@@ -3725,7 +3725,6 @@ body.modal-open { overflow:hidden; }
 .learner-card.selected { background: #f1f6e9; border-color: #a0bd7d; }
 .learner-card strong { font-size: 21px; overflow-wrap: anywhere; max-width: 100%; }
 .learner-avatar { display: grid; place-items: center; width: 86px; height: 86px; border-radius: 26px; background: #edf3e4; font-size: 48px; }
-.learner-code { color: #7a896f; font-size: 11px; }
 .learner-start { display: flex; align-items: center; gap: 8px; margin-top: 9px; color: #5a7545; font-size: 12px; }
 .add-learner { background: transparent; border-style: dashed; color: #74896a; }
 .add-learner > span:last-child { font-size: 12px; }

@@ -151,7 +151,7 @@ Không đăng nhập, không analytics, không gửi bài làm lên server. Hồ
 
 Tiến độ chỉ thuộc **trình duyệt và địa chỉ đang mở**. Dữ liệu của file trực tiếp, localhost và website đã deploy không tự chia sẻ. Trình duyệt khác, chế độ riêng tư hoặc xóa site data có thể làm mất tiến độ.
 
-Nếu trình duyệt chặn lưu hoặc hết dung lượng, website hiển thị thông báo và giữ các hồ sơ trong bộ nhớ của phiên hiện tại. Hãy lần lượt chọn và xuất tiến độ các hồ sơ trước khi đóng trang. Hồ sơ có dữ liệu hỏng không bị tự đặt lại; có thể nhập bản sao hợp lệ thành hồ sơ mới để tiếp tục.
+Nếu trình duyệt chặn lưu hoặc hết dung lượng, website hiển thị thông báo và giữ các hồ sơ trong bộ nhớ của phiên hiện tại. Hãy lần lượt chọn và sao lưu tiến độ các hồ sơ trước khi đóng trang. Hồ sơ có dữ liệu hỏng không bị tự đặt lại; người lớn có thể tạo hồ sơ mới để con tiếp tục.
 
 ## Deploy hosting tĩnh
 
