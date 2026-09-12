@@ -95,13 +95,14 @@ test('Different tabs cannot overwrite sibling profiles or a newer same-profile s
   tab1.selectProfile(a); assert.equal(tab1.state.stars, 40); assert.equal(tab1.conflict, false);
   tab1.selectProfile(b); assert.equal(tab1.state.stars, 20);
 });
-test('Denied storage supports multiple in-memory profiles and export without silent loss', () => {
+test('Denied storage creates the default in memory and supports multiple profiles without silent loss', () => {
   const {store: s} = context(new Map(), true);
+  assert.equal(s.state.name, 'Bạn nhỏ');
   const a = s.createProfile('An'); s.state.stars = 25; s.save();
   const b = s.createProfile('Bình'); assert.equal(s.state.stars, 0);
   s.selectProfile(a); assert.equal(s.state.stars, 25); assert.ok(s.warning);
   assert.equal(s.exportProfile().progress.stars, 25);
-  s.selectProfile(b); assert.equal(s.listProfiles().length, 2);
+  s.selectProfile(b); assert.equal(s.listProfiles().length, 3);
 });
 
 test('Vocabulary evidence tracks exposure, recognition, spelling and review separately', () => {

@@ -187,7 +187,13 @@
           createProfile(old.name, old.avatar, old);
         } else createProfile('Bạn nhỏ', '🦉');
       }
-    } catch (_) { warning = 'Ôi, Little Steps chưa mở được hành trình đã lưu. Con có thể bắt đầu một hành trình mới. Nếu gia đình có bản sao tiến độ, hãy nhờ người lớn giúp con khôi phục nhé.'; }
+    } catch (_) {
+      warning = 'Ôi, Little Steps chưa mở được hành trình đã lưu. Con có thể bắt đầu một hành trình mới. Nếu gia đình có bản sao tiến độ, hãy nhờ người lớn giúp con khôi phục nhé.';
+      if (!registry.profiles.length) {
+        try { createProfile('Bạn nhỏ', '🦉'); }
+        catch (_) { /* The in-memory profile is still available when browser storage is blocked. */ }
+      }
+    }
   }
   function reward(key, amount) {
     if (state.rewards[key]) return 0;
