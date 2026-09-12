@@ -488,7 +488,10 @@
     ({home, learn, practice, progress, tests, review, words, lesson: renderSession})[route]();
     window.scrollTo({top: 0});
   }
+  // Safari on iPad consistently sends touchend for a finger tap. Keep click for
+  // mouse and keyboard activation, while ignoring its follow-up synthetic click.
   const touchActions = new WeakSet();
+  const actionTarget = target => target instanceof Element ? target.closest('[data-action]') : null;
   function handleAction(target) {
     const {action, week, day, skill, id, mode, value} = target.dataset;
     if (S.conflict && !['export', 'learners', 'select-learner', 'close-modal', 'reload', 'add-learner'].includes(action)) { toast(S.warning); return; }
@@ -535,13 +538,12 @@
     }
   }
   document.addEventListener('click', event => {
-    const target = event.target.closest('[data-action]');
+    const target = actionTarget(event.target);
     if (!target || target.disabled || touchActions.has(target)) return;
     handleAction(target);
   });
-  document.addEventListener('pointerup', event => {
-    if (event.pointerType && event.pointerType !== 'touch') return;
-    const target = event.target.closest('[data-action]');
+  document.addEventListener('touchend', event => {
+    const target = actionTarget(event.target);
     if (!target || target.disabled) return;
     event.preventDefault();
     touchActions.add(target);
