@@ -15,10 +15,11 @@
   const fresh = (name = 'Alex', avatar = '🦉') => ({version: 1, name, avatar, currentWeek: 1, currentDay: 1, stars: 0, completed: {}, answers: {}, mistakes: {}, learnedWords: [], wordProgress: {}, learningTrack: 'movers', activityDays: [], daily: {}, rewards: {}, history: [], activeSession: null});
   let state = fresh();
   const object = v => v !== null && typeof v === 'object' && !Array.isArray(v);
+  const hasOwn = (value, key) => Object.prototype.hasOwnProperty.call(value, key);
   const integer = (n, min = 0, max = Number.MAX_SAFE_INTEGER) => Number.isSafeInteger(n) && n >= min && n <= max;
   const date = s => typeof s === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(s);
-  const knownSkill = s => Object.hasOwn(window.MoversData.skills, s);
-  const knownQuestion = id => typeof id === 'string' && Object.hasOwn(window.MoversData.allQuestions, id);
+  const knownSkill = s => hasOwn(window.MoversData.skills, s);
+  const knownQuestion = id => typeof id === 'string' && hasOwn(window.MoversData.allQuestions, id);
   function invalid() { throw new Error('File không đúng định dạng tiến độ Little Steps, hoặc có dữ liệu không hợp lệ.'); }
   function parse(text) {
     if (typeof text !== 'string' || text.length > 2 * 1024 * 1024) invalid();
@@ -38,7 +39,7 @@
     if (Object.entries(v.answers).some(([id, a]) => !knownQuestion(id) || !object(a) || typeof a.correct !== 'boolean' || a.skill !== window.MoversData.allQuestions[id].skill || typeof a.response !== 'string' || !date(a.date))) invalid();
     if (Object.entries(v.mistakes).some(([id, m]) => !knownQuestion(id) || !object(m) || typeof m.response !== 'string' || !integer(m.correctRuns) || typeof m.mastered !== 'boolean' || !date(m.date))) invalid();
     if (v.learningTrack != null && !['foundation','movers'].includes(v.learningTrack)) invalid();
-    if (v.wordProgress != null && (!object(v.wordProgress) || Object.entries(v.wordProgress).some(([id,p]) => !Object.hasOwn(window.MoversData.wordById || {},id) || !object(p) || typeof p.seen !== 'boolean' || !integer(p.recognition) || !integer(p.spelling) || !integer(p.reviewRuns) || typeof p.needsReview !== 'boolean' || !date(p.due) || !date(p.lastSeen)))) invalid();
+    if (v.wordProgress != null && (!object(v.wordProgress) || Object.entries(v.wordProgress).some(([id,p]) => !hasOwn(window.MoversData.wordById || {},id) || !object(p) || typeof p.seen !== 'boolean' || !integer(p.recognition) || !integer(p.spelling) || !integer(p.reviewRuns) || typeof p.needsReview !== 'boolean' || !date(p.due) || !date(p.lastSeen)))) invalid();
     const responseValid = a => object(a) && knownQuestion(a.id) && a.skill === window.MoversData.allQuestions[a.id].skill && typeof a.response === 'string' && typeof a.assessed === 'boolean' && (a.assessed ? typeof a.correct === 'boolean' : a.correct === null);
     if (v.history.length > 100) invalid();
     for (const h of v.history) {
@@ -64,7 +65,7 @@
       }
     }
     const result = fresh(v.name.trim(), validAvatar(v.avatar) ? v.avatar : '🦉');
-    for (const key of Object.keys(result)) if (Object.hasOwn(v, key) && !['name', 'avatar'].includes(key)) result[key] = v[key];
+    for (const key of Object.keys(result)) if (hasOwn(v, key) && !['name', 'avatar'].includes(key)) result[key] = v[key];
     result.learnedWords = [...new Set(result.learnedWords)];
     result.activityDays = [...new Set(result.activityDays)];
     // Old "learned" flags indicate exposure only, never inferred mastery.

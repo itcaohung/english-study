@@ -9,12 +9,13 @@ const INDEX = 'littleStepsMovers.profiles.v2';
 const OLD = 'littleStepsMovers.v1';
 const key = id => 'littleStepsMovers.profile.' + id;
 let sequence = 0;
-function context(db = new Map(), deny = false) {
+function context(db = new Map(), deny = false, withoutObjectHasOwn = false) {
   const sandbox = {window: {crypto: {randomUUID: () => `test-profile-${++sequence}`}}, localStorage: {
     getItem: k => {if (deny) throw Error('denied'); return db.get(k) ?? null;},
     setItem: (k, v) => {if (deny) throw Error('denied'); db.set(k, String(v));}
   }};
   vm.createContext(sandbox);
+  if (withoutObjectHasOwn) vm.runInContext('Object.hasOwn = undefined;', sandbox);
   for (const file of ['data.js', 'lexicon.js', 'vocabulary.js', 'storage.js']) vm.runInContext(fs.readFileSync(path.join(root, 'js', file), 'utf8'), sandbox);
   return {store: sandbox.window.MoversStore, data: sandbox.window.MoversData, db};
 }
@@ -62,6 +63,11 @@ test('Storage API keeps backup export but does not expose file restore', () => {
   assert.equal(backup.progress.name, s.state.name);
   assert.equal(s.previewImport, undefined);
   assert.equal(s.importProgress, undefined);
+});
+test('Storage validation works when Object.hasOwn is unavailable', () => {
+  const {store: s} = context(new Map(), false, true);
+  assert.equal(s.listProfiles().length, 1);
+  assert.equal(s.state.name, 'Bạn nhỏ');
 });
 test('Different tabs cannot overwrite sibling profiles or a newer same-profile save', () => {
   const db = new Map(), tab1 = context(db).store;
