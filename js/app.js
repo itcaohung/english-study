@@ -488,9 +488,8 @@
     ({home, learn, practice, progress, tests, review, words, lesson: renderSession})[route]();
     window.scrollTo({top: 0});
   }
-  document.addEventListener('click', event => {
-    const target = event.target.closest('[data-action]');
-    if (!target || target.disabled) return;
+  const touchActions = new WeakSet();
+  function handleAction(target) {
     const {action, week, day, skill, id, mode, value} = target.dataset;
     if (S.conflict && !['export', 'learners', 'select-learner', 'close-modal', 'reload', 'add-learner'].includes(action)) { toast(S.warning); return; }
     switch (action) {
@@ -534,12 +533,20 @@
       case 'reset': if ($('#reset-confirm').value === 'RESET') {try {S.reset(); adoptProfile(); toast('Đã đặt lại tiến độ của ' + S.state.name + '.');} catch (error) {toast(error.message);}} else toast('Nhập chính xác RESET nếu muốn đặt lại hồ sơ.'); break;
       case 'history-result': {const r = S.state.history.find(h => h.time === Number(target.dataset.time)); if (r) {historicalResult = r; route = 'lesson'; if (location.hash !== '#lesson') location.hash = 'lesson'; else renderResult(r, true);} break;}
     }
+  }
+  document.addEventListener('click', event => {
+    const target = event.target.closest('[data-action]');
+    if (!target || target.disabled || touchActions.has(target)) return;
+    handleAction(target);
   });
   document.addEventListener('pointerup', event => {
-    const target = event.target.closest('[data-action="check"]');
+    if (event.pointerType && event.pointerType !== 'touch') return;
+    const target = event.target.closest('[data-action]');
     if (!target || target.disabled) return;
     event.preventDefault();
-    checkAnswer();
+    touchActions.add(target);
+    handleAction(target);
+    setTimeout(() => touchActions.delete(target), 800);
   });
   document.addEventListener('input', e => {
     if(e.target.id==='bank-search'){bankSearch=e.target.value;$('#bank-results').innerHTML=bankResults();}
