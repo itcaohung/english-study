@@ -540,21 +540,32 @@ Put in order: took / photos / Tom / three|Tom took three photos.`
     week.readingQuestions.push(question('reading', 12, {type: 'choice', title: 'Choose a title', passage: readingPacks[index][0][1], prompt: 'Choose the best title for this story.', answer: readingPacks[index][0][0], options: [readingPacks[index][0][0], 'A robot on the moon', 'My new shoes'], explanation: 'Chọn tiêu đề bao quát nội dung cả đoạn.', topic: 'Story titles'}));
     const numberWords = {3: 'three', 4: 'four', 11: 'eleven', 12: 'twelve', 13: 'thirteen', 14: 'fourteen', 15: 'fifteen', 16: 'sixteen', 18: 'eighteen', 20: 'twenty', 30: 'thirty', 40: 'forty', 50: 'fifty'};
     week.listeningQuestions = listeningPacks[index].map(([prompt, audio, answer, distractors, topic], i) => question('listening', i, {type: distractors ? 'choice' : 'input', prompt, audio, answer, accept: numberWords[answer] ? [numberWords[answer]] : [], options: distractors ? [answer, ...distractors] : null, explanation: `Lời thoại: ${audio}`, topic}));
+    // Extra short clips make Days 4–5 fresh while reinforcing the week's new words.
+    week.vocabulary.slice(0, 5).forEach((v, i) => {
+      const other = [week.vocabulary[(i + 4) % week.vocabulary.length], week.vocabulary[(i + 9) % week.vocabulary.length]];
+      week.listeningQuestions.push(question('listening', 10 + i, {type: 'choice', prompt: 'Which word do you hear?', audio: `Listen carefully. ${v.example}`, answer: v.word, options: [v.word, ...other.map(item => item.word)], explanation: `You can hear the word “${v.word}”. ${v.example}`, topic: 'Listen for a word'}));
+    });
+    week.vocabulary.slice(0, 2).forEach((v, i) => {
+      const other = [week.vocabulary[(i + 5) % week.vocabulary.length], week.vocabulary[(i + 10) % week.vocabulary.length]];
+      week.readingQuestions.push(question('reading', 13 + i, {type: 'choice', title: 'Read a clue', passage: v.example, prompt: 'Which word can you find in the sentence?', answer: v.word, options: [v.word, ...other.map(item => item.word)], explanation: `The sentence uses “${v.word}”.`, topic: 'Read for a word'}));
+    });
     week.writingQuestions = writingRows[index].split('\n').map((row, i) => { const [prompt, answer] = row.split('|'); return question('writing', i, {type: 'input', prompt, answer, explanation: `Câu/từ hoàn chỉnh: ${answer}`, topic: i === 0 || i === 1 ? 'Spelling' : i === 4 ? 'Grammar in writing' : 'Sentence order'}); });
     week.writingQuestions.push(question('writing', 6, {type: 'open', prompt: 'Write two sentences about the picture.', scene: scenes[index], answer: scenes[index].model, hint: 'Who / What + is/are + action or place.', checklist: ['Con viết hai câu đúng với tranh.', 'Mỗi câu có chủ ngữ và động từ.', 'Con kiểm tra chữ hoa, chính tả và dấu chấm.'], topic: 'Picture description'}));
     week.writingQuestions.push(question('writing', 7, {type: 'open', prompt: 'Write a short story: one sentence for each picture.', scene: {kind: 'story', panels: stories[index]}, answer: stories[index].map(p => p[1]).join(' '), hint: 'First… Then… Next… Finally…', checklist: ['Con viết theo đúng trình tự tranh.', 'Mỗi câu diễn tả một việc.', 'Con kiểm tra động từ và dấu câu.'], topic: 'Short story'}));
+    week.vocabulary.slice(0, 7).forEach((v, i) => week.writingQuestions.push(question('writing', 8 + i, {type: 'input', prompt: i % 2 ? `Write the English word: ${v.meaning}` : v.example.replace(new RegExp(v.word.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'i'), '_____'), context: i % 2 ? '' : `Gợi ý: ${v.meaning}`, answer: v.word, explanation: v.example, topic: i % 2 ? 'Spelling' : 'Complete the sentence'})));
     week.speakingQuestions = personalPrompts[index].map(([prompt, hint, answer], i) => question('speaking', i, {type: 'speaking', prompt, hint, answer, scene: scenes[index], topic: 'Personal questions'}));
     week.speakingQuestions.push(question('speaking', 4, {type: 'speaking', prompt: 'Look at the picture. What can you see?', hint: 'I can see… The … is …', answer: scenes[index].model, scene: scenes[index], topic: 'Picture description'}));
     week.speakingQuestions.push(question('speaking', 5, {type: 'speaking', prompt: 'Find four differences between picture A and picture B.', hint: 'In picture A… In picture B… Look at the sun, shirt, balls and cat.', answer: 'In picture A, it is sunny. In B, it is cloudy. The shirt is blue in A and red in B. There is one ball in A and two in B. The cat is next to the tree in A and on the bench in B.', scene: {kind: 'differences'}, topic: 'Find the differences'}));
     week.speakingQuestions.push(question('speaking', 6, {type: 'speaking', prompt: `Listen to the first picture: “${stories[index][0][1]}” Now tell the rest of the story.`, hint: 'Then… Next… Finally…', answer: stories[index].slice(1).map(p => p[1]).join(' '), scene: {kind: 'story', panels: stories[index]}, topic: 'Picture story'}));
     week.speakingQuestions.push(question('speaking', 7, {type: 'speaking', prompt: 'Which one is different? Why?', hint: 'The … is different because…', answer: oddSets[index][1], scene: {kind: 'odd', items: oddSets[index][0]}, topic: 'Odd one out'}));
+    week.vocabulary.slice(0, 7).forEach((v, i) => week.speakingQuestions.push(question('speaking', 8 + i, {type: 'speaking', prompt: `Can you make a sentence with “${v.word}”?`, hint: `Try: ${v.example}`, answer: v.example, scene: scenes[index], topic: 'Make a sentence'})));
     return week;
   });
   function lessonQuestions(weekNumber, day, skill) {
     const week = weeks[weekNumber - 1];
     const list = week[skill + 'Questions'];
-    const count = skill === 'grammar' ? 5 : 2;
-    // Revisit the first two writing/speaking tasks on day five; all tasks seen by day four.
+    const count = skill === 'grammar' ? 5 : skill === 'vocabulary' ? 2 : 3;
+    // Vocabulary lessons use daily flashcards. Other skills progress through larger daily sets.
     return Array.from({length: count}, (_, i) => list[((day - 1) * count + i) % list.length]);
   }
   const quizzes = weeks.map(w => Array.from({length: 5}, (_, d) => ({id: `quiz-${w.number}-${d + 1}`, week: w.number, day: d + 1, title: `Week ${w.number} · Day ${d + 1} mini quiz`, questions: [w.vocabularyQuestions[d * 10], w.vocabularyQuestions[d * 10 + 3], w.grammarQuestions[d * 2], w.readingQuestions[d * 2], w.writingQuestions[d % 6]]})));
