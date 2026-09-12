@@ -297,7 +297,7 @@ main:focus {
   font-size:12px;
   margin-left:6px
 }
-.avatar img,.learner-avatar img,.avatar-options img { width:100%; height:100%; object-fit:contain; border-radius:inherit; display:block; }
+.avatar img,.learner-avatar img,.avatar-options img { width:100%; height:100%; object-fit:cover; border-radius:inherit; display:block; }
 .avatar-pill { display:inline-flex; align-items:center; gap:6px; }.avatar-pill img { width:20px; height:20px; border-radius:50%; object-fit:cover; }
 .workspace {
   margin-left:var(--sidebar)

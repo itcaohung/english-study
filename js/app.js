@@ -41,7 +41,7 @@
     } catch (error) { toast(error.message); }
   }
   function avatarOptions(selected) {
-    return `<fieldset class="avatar-options"><legend>Chọn bạn đồng hành</legend>${S.avatars.map((a, i) => `<label><input type="radio" name="learner-avatar" value="${a}" ${a === selected ? 'checked' : ''}><span role="img" aria-label="${['Cú mèo', 'Cáo', 'Gấu trúc', 'Mèo', 'Cá heo', 'Thỏ', 'Hổ', 'Koala'][i]}">${a}</span></label>`).join('')}<label class="avatar-upload"><input type="file" id="avatar-upload" accept="image/png,image/jpeg,image/webp" aria-label="Tải ảnh làm avatar"><span id="avatar-upload-preview">${isCustomAvatar(selected) ? avatarContent(selected, 'Ảnh avatar hiện tại') : '＋'}</span><small>Ảnh</small></label></fieldset><p class="avatar-help">Hoặc chọn ảnh PNG, JPG hay WebP. Ảnh được thu gọn để thấy trọn khung hình và chỉ lưu trong hồ sơ này.</p>`;
+    return `<fieldset class="avatar-options"><legend>Chọn bạn đồng hành</legend>${S.avatars.map((a, i) => `<label><input type="radio" name="learner-avatar" value="${a}" ${a === selected ? 'checked' : ''}><span role="img" aria-label="${['Cú mèo', 'Cáo', 'Gấu trúc', 'Mèo', 'Cá heo', 'Thỏ', 'Hổ', 'Koala'][i]}">${a}</span></label>`).join('')}<label class="avatar-upload"><input type="file" id="avatar-upload" accept="image/png,image/jpeg,image/webp" aria-label="Tải ảnh làm avatar"><span id="avatar-upload-preview">${isCustomAvatar(selected) ? avatarContent(selected, 'Ảnh avatar hiện tại') : '＋'}</span><small>Ảnh</small></label></fieldset><p class="avatar-help">Hoặc chọn ảnh PNG, JPG hay WebP. Ảnh sẽ được căn giữa thành avatar tròn và chỉ lưu trong hồ sơ này.</p>`;
   }
   function prepareAvatar(file) {
     return new Promise((resolve, reject) => {
@@ -53,11 +53,11 @@
         const image = new Image();
         image.onerror = () => reject(new Error('Ảnh này không mở được.'));
         image.onload = () => {
-          const canvas = document.createElement('canvas'), size = 160, scale = Math.min(size / image.naturalWidth, size / image.naturalHeight), width = image.naturalWidth * scale, height = image.naturalHeight * scale;
+          const canvas = document.createElement('canvas'), size = 160, scale = Math.max(size / image.naturalWidth, size / image.naturalHeight), width = image.naturalWidth * scale, height = image.naturalHeight * scale;
           canvas.width = canvas.height = size;
           const context = canvas.getContext('2d');
-          context.fillStyle = '#f7f2e8'; context.fillRect(0, 0, size, size);
-          context.drawImage(image, (size - width) / 2, (size - height) / 2, width, height);
+          context.imageSmoothingQuality = 'high';
+          context.drawImage(image, (size - width) / 2, image.naturalHeight > image.naturalWidth ? (size - height) * .22 : (size - height) / 2, width, height);
           const value = canvas.toDataURL('image/jpeg', .84);
           if (value.length > 140000) return reject(new Error('Không thể nén ảnh đủ nhỏ để lưu an toàn. Thử ảnh khác nhé.'));
           resolve(value);
