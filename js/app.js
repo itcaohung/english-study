@@ -535,6 +535,12 @@
       case 'history-result': {const r = S.state.history.find(h => h.time === Number(target.dataset.time)); if (r) {historicalResult = r; route = 'lesson'; if (location.hash !== '#lesson') location.hash = 'lesson'; else renderResult(r, true);} break;}
     }
   });
+  document.addEventListener('pointerup', event => {
+    const target = event.target.closest('[data-action="check"]');
+    if (!target || target.disabled) return;
+    event.preventDefault();
+    checkAnswer();
+  });
   document.addEventListener('input', e => {
     if(e.target.id==='bank-search'){bankSearch=e.target.value;$('#bank-results').innerHTML=bankResults();}
     if (e.target.id === 'answer-input' && session) {session.draft = e.target.value; persistSession(); const b = $('[data-action="check"]'); if (b) b.disabled = !e.target.value.trim();}
