@@ -9,7 +9,7 @@
   const skillKeys = Object.keys(D.skills);
   let learnerChosen = false;
   let route = 'home', selectedWeek = S.state.currentWeek, selectedDay = S.state.currentDay;
-  let session = restoreSession(), lastResult = null, historicalResult = null, practiceSkill = 'vocabulary', practiceWeek = S.state.currentWeek, timer = null, audioTimer = null;
+  let session = restoreSession(), lastResult = null, historicalResult = null, practiceSkill = 'vocabulary', practiceWeek = S.state.currentWeek, timer = null, audioTimer = null, audioRun = 0, speechVoices = [];
   function restoreSession() {
     const saved = S.state.activeSession;
     if (!saved || saved.finished || !['lesson', 'practice', 'flashcards', 'quiz', 'weekly', 'mock', 'random', 'review'].includes(saved.kind)) return null;
@@ -256,23 +256,58 @@
     begin({kind: 'practice', title: `Week ${practiceWeek} · ${D.skills[practiceSkill].name}`, questions, week: practiceWeek, skill: practiceSkill, key: `practice-${practiceWeek}-${practiceSkill}-${mode}`, intro: practiceSkill === 'grammar'});
   }
   function stopAudio() {
+    audioRun++;
     clearTimeout(audioTimer);
     if ('speechSynthesis' in window) window.speechSynthesis.cancel();
     const status = $('#audio-status'); if (status) status.textContent = '';
   }
+  function refreshSpeechVoices() {
+    if (!('speechSynthesis' in window)) return;
+    speechVoices = window.speechSynthesis.getVoices().filter(voice => /^en[-_]/i.test(voice.lang));
+  }
+  function preferredVoice() {
+    const score = voice => {
+      const name = `${voice.name} ${voice.voiceURI}`.toLowerCase(), lang = voice.lang.toLowerCase();
+      let points = lang.startsWith('en-gb') ? 50 : lang.startsWith('en-au') || lang.startsWith('en-nz') ? 35 : 15;
+      if (/(enhanced|premium|natural|neural|siri|microsoft|google)/.test(name)) points += 40;
+      if (voice.localService) points += 4;
+      if (voice.default) points += 2;
+      return points;
+    };
+    return speechVoices.slice().sort((a, b) => score(b) - score(a))[0];
+  }
+  function speechParts(text) {
+    const sentences = String(text).replace(/\s+/g, ' ').replace(/[—–]/g, ', ').trim().match(/[^.!?;:]+[.!?;:]*/g) || [];
+    return sentences.flatMap(sentence => {
+      if (sentence.length <= 220) return sentence;
+      const words = sentence.split(' '), parts = [], current = [];
+      words.forEach(word => { if ((current.join(' ').length + word.length + 1) > 180) { parts.push(current.join(' ')); current.length = 0; } current.push(word); });
+      if (current.length) parts.push(current.join(' '));
+      return parts;
+    }).map(part => part.trim()).filter(Boolean);
+  }
   function speak(text) {
     stopAudio();
     if (!('speechSynthesis' in window)) return audioUnavailable();
-    const utterance = new SpeechSynthesisUtterance(text);
-    const voices = speechSynthesis.getVoices().filter(v => /^en[-_]/i.test(v.lang));
-    utterance.lang = 'en-GB'; utterance.rate = 0.82;
-    if (voices.length) utterance.voice = voices.find(v => /en[-_]GB/i.test(v.lang)) || voices[0];
+    refreshSpeechVoices();
+    const parts = speechParts(text), voice = preferredVoice(), run = ++audioRun;
+    if (!parts.length) return;
     const status = $('#audio-status'); if (status) status.textContent = 'Đang chuẩn bị giọng đọc…';
-    utterance.onstart = () => {clearTimeout(audioTimer); if ($('#audio-status')) $('#audio-status').textContent = '♫ Đang đọc…';};
-    utterance.onend = () => {if ($('#audio-status')) $('#audio-status').textContent = 'Đã nghe xong. Con có thể nghe lại.';};
-    utterance.onerror = e => {clearTimeout(audioTimer); if (!['canceled', 'interrupted'].includes(e.error)) audioUnavailable();};
-    audioTimer = setTimeout(audioUnavailable, 7000);
-    speechSynthesis.speak(utterance);
+    const timeout = Math.min(30000, Math.max(7000, text.trim().split(/\s+/).length * 520));
+    audioTimer = setTimeout(() => { if (run === audioRun) audioUnavailable(); }, timeout);
+    const playPart = index => {
+      if (run !== audioRun) return;
+      const utterance = new SpeechSynthesisUtterance(parts[index]);
+      utterance.lang = voice?.lang || 'en-GB';
+      utterance.rate = parts[index].split(/\s+/).length < 4 ? 0.78 : 0.9;
+      utterance.pitch = 1;
+      if (voice) utterance.voice = voice;
+      utterance.onstart = () => { if (run === audioRun) { clearTimeout(audioTimer); if ($('#audio-status')) $('#audio-status').textContent = '♫ Đang đọc…'; } };
+      utterance.onend = () => { if (run !== audioRun) return; if (index < parts.length - 1) setTimeout(() => playPart(index + 1), 180); else if ($('#audio-status')) $('#audio-status').textContent = 'Đã nghe xong. Con có thể nghe lại.'; };
+      utterance.onerror = event => { if (run === audioRun && !['canceled', 'interrupted'].includes(event.error)) audioUnavailable(); };
+      window.speechSynthesis.speak(utterance);
+    };
+    playPart(0);
   }
   function audioUnavailable() {
     if ($('#audio-status')) $('#audio-status').textContent = 'Chưa phát được giọng tiếng Anh. Nhờ bố mẹ mở lời thoại và đọc giúp con.';
@@ -485,6 +520,7 @@
   });
   window.addEventListener('hashchange', navigate);
   window.addEventListener('pagehide', stopAudio);
+  if ('speechSynthesis' in window) { refreshSpeechVoices(); window.speechSynthesis.addEventListener?.('voiceschanged', refreshSpeechVoices); }
   // Expose pure helpers for the offline validation suite; no network or runtime dependency.
   window.MoversApp = {normalize, isCorrect, weekProgress, accuracy, nextLesson, randomTest};
   navigate();

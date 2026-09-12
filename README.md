@@ -98,7 +98,7 @@ Các bài kiểm tra trên website là **bài luyện tổng hợp tự biên so
 
 ## Audio
 
-Các nút Listen và Again dùng `window.speechSynthesis` với `SpeechSynthesisUtterance`, ưu tiên giọng `en-GB`, tốc độ 0,82. Website không gọi API âm thanh bên ngoài.
+Các nút Listen và Again dùng `window.speechSynthesis` với `SpeechSynthesisUtterance`. Website ưu tiên giọng tiếng Anh Anh, sau đó là giọng Anh-Australia/New Zealand hoặc một giọng tiếng Anh khác mà thiết bị có sẵn; các giọng được đánh dấu Enhanced, Natural, Neural, Siri, Microsoft hoặc Google được ưu tiên. Từ đơn đọc chậm hơn câu, còn câu dài được chia theo điểm ngắt tự nhiên. Website không gọi API âm thanh bên ngoài.
 
 Khả năng phát âm phụ thuộc giọng tiếng Anh được cài trên hệ điều hành/trình duyệt. Một số giọng của thiết bị có thể cần mạng. Nếu không có giọng hoặc không phát được, trang hiển thị hướng dẫn cùng lời thoại để **bố mẹ đọc giúp**. Các bài nghe có câu thoại đầy đủ, bao gồm số, tên đánh vần, vị trí, hành động, ghép thông tin và chọn hình.
 
