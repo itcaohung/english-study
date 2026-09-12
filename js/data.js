@@ -545,9 +545,17 @@ Put in order: took / photos / Tom / three|Tom took three photos.`
       const other = [week.vocabulary[(i + 4) % week.vocabulary.length], week.vocabulary[(i + 9) % week.vocabulary.length]];
       week.listeningQuestions.push(question('listening', 10 + i, {type: 'choice', prompt: 'Which word do you hear?', audio: `Listen carefully. ${v.example}`, answer: v.word, options: [v.word, ...other.map(item => item.word)], explanation: `You can hear the word “${v.word}”. ${v.example}`, topic: 'Listen for a word'}));
     });
+    week.vocabulary.slice(5, 15).forEach((v, i) => {
+      const other = [week.vocabulary[(i + 1) % week.vocabulary.length], week.vocabulary[(i + 11) % week.vocabulary.length]];
+      week.listeningQuestions.push(question('listening', 15 + i, {type: 'choice', prompt: 'Which word do you hear?', audio: `Listen carefully. ${v.example}`, answer: v.word, options: [v.word, ...other.map(item => item.word)], explanation: `You can hear the word “${v.word}”. ${v.example}`, topic: 'Listen for a word'}));
+    });
     week.vocabulary.slice(0, 2).forEach((v, i) => {
       const other = [week.vocabulary[(i + 5) % week.vocabulary.length], week.vocabulary[(i + 10) % week.vocabulary.length]];
       week.readingQuestions.push(question('reading', 13 + i, {type: 'choice', title: 'Read a clue', passage: v.example, prompt: 'Which word can you find in the sentence?', answer: v.word, options: [v.word, ...other.map(item => item.word)], explanation: `The sentence uses “${v.word}”.`, topic: 'Read for a word'}));
+    });
+    week.vocabulary.slice(2, 12).forEach((v, i) => {
+      const other = [week.vocabulary[(i + 6) % week.vocabulary.length], week.vocabulary[(i + 13) % week.vocabulary.length]];
+      week.readingQuestions.push(question('reading', 15 + i, {type: 'choice', title: 'Read a clue', passage: v.example, prompt: 'Which word can you find in the sentence?', answer: v.word, options: [v.word, ...other.map(item => item.word)], explanation: `The sentence uses “${v.word}”.`, topic: 'Read for a word'}));
     });
     week.writingQuestions = writingRows[index].split('\n').map((row, i) => { const [prompt, answer] = row.split('|'); return question('writing', i, {type: 'input', prompt, answer, explanation: `Câu/từ hoàn chỉnh: ${answer}`, topic: i === 0 || i === 1 ? 'Spelling' : i === 4 ? 'Grammar in writing' : 'Sentence order'}); });
     week.writingQuestions.push(question('writing', 6, {type: 'open', prompt: 'Write two sentences about the picture.', scene: scenes[index], answer: scenes[index].model, hint: 'Who / What + is/are + action or place.', checklist: ['Con viết hai câu đúng với tranh.', 'Mỗi câu có chủ ngữ và động từ.', 'Con kiểm tra chữ hoa, chính tả và dấu chấm.'], topic: 'Picture description'}));
@@ -564,7 +572,7 @@ Put in order: took / photos / Tom / three|Tom took three photos.`
   function lessonQuestions(weekNumber, day, skill) {
     const week = weeks[weekNumber - 1];
     const list = week[skill + 'Questions'];
-    const count = skill === 'grammar' ? 5 : skill === 'vocabulary' ? 2 : 3;
+    const count = ['grammar', 'listening', 'reading'].includes(skill) ? 5 : skill === 'vocabulary' ? 2 : 3;
     // Vocabulary lessons use daily flashcards. Other skills progress through larger daily sets.
     return Array.from({length: count}, (_, i) => list[((day - 1) * count + i) % list.length]);
   }
