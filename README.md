@@ -19,6 +19,8 @@ English-Study/
 │   ├── data.js       # Nội dung, bộ câu hỏi, lịch học, quiz và test
 │   ├── storage.js    # localStorage, sao, streak, lịch sử, câu sai
 │   └── app.js        # Giao diện, điều hướng, tương tác, chấm đáp án
+├── tests/
+│   └── storage.test.cjs # Kiểm thử lưu trữ, không cần khi sử dụng website
 └── README.md
 ```
 
@@ -28,9 +30,10 @@ Không cần thư mục ảnh/audio riêng: tranh được tạo trong trang; ph
 
 | Khu vực | Chức năng |
 | --- | --- |
-| Home | Tiếp tục bài đang học; tuần hiện tại; mục tiêu ngày; sao; streak; kỹ năng cần luyện |
+| Home | Nhiệm vụ tiếp theo, bản đồ 8 vùng khám phá, mục tiêu ngày, sticker và nhịp học từ vựng |
 | Learn | Chọn tuần, ngày và một trong 6 kỹ năng; mini quiz mỗi ngày; kiểm tra cuối tuần |
 | Practice | Chọn tuần và kỹ năng, luyện toàn bộ ngân hàng câu hỏi, không giới hạn lượt |
+| Kho từ vựng | Tìm/lọc kho Starters–Movers, nghe từ, khám phá thẻ, nhận biết, xếp chữ và tự viết |
 | My tests | 8 bài kiểm tra tuần và 2 bài tổng hợp ở tuần 8 |
 | Progress | Tiến độ 8 tuần, độ chính xác, tiến độ luyện nói, huy hiệu và lịch sử điểm |
 | Review mistakes | Xem câu cần ôn, đáp án, giải thích và luyện lại |
@@ -50,13 +53,15 @@ Trên mobile, menu chính nằm phía dưới. Vào **Learn** để mở kiểm 
 | 7 | Movers Review | 20 | 12 | 13 | 8 | 10 | 8 |
 | 8 | Mock Test & Celebration | 20 | 12 | 13 | 8 | 10 | 8 |
 
-**161 thẻ từ theo tuần**, mỗi thẻ có nghĩa, hình gợi ý và câu ví dụ. Một số từ được ôn ở nhiều tuần. Mỗi từ có 5 hoạt động: chọn nghĩa, chọn từ, thiếu chữ, chính tả và hoàn thành câu. Tổng ngân hàng có **1.213 hoạt động**, gồm các dạng từ vựng này và câu hỏi 5 kỹ năng còn lại.
+Các bài theo tuần cũ giữ **161 thẻ từ** để những bài đang học, câu sai và lịch sử cũ luôn mở được. Kho từ vựng mới có **1.015 mục**: 506 mục nền tảng Starters, 478 mục Movers và 31 mục mở rộng/biến thể đã có trong nội dung cũ. Từ khác nghĩa như *bat* (gậy/con dơi) và *fly* (bay/con ruồi) là các mục riêng; biến thể Anh–Mỹ và dạng số nhiều được gộp khi phù hợp.
+
+Kho này dựa trên [wordlist Cambridge 2025](https://www.cambridgeenglish.org/Images/506166-starters-movers-flyers-word-list-2025.pdf), có thêm nghĩa tiếng Việt và ví dụ tự biên soạn. Đây là kho để học và ôn có hệ thống, không phải cam kết rằng trẻ phải học toàn bộ hơn 1.000 mục trong 8 tuần.
 
 Nội dung ngữ pháp có giải thích tiếng Việt và 3 câu mẫu/tuần. Bài đọc có 2 đoạn ngắn/tuần cùng câu hỏi chi tiết, điền từ, True/False, định nghĩa, hội thoại và tiêu đề. Bài nói có câu hỏi cá nhân, tranh miêu tả, tìm 4 khác biệt, chuỗi 4 tranh và hình khác nhóm.
 
 ### Một ngày học
 
-1. **Vocabulary:** 10 thẻ từ có xoay vòng và ôn lặp lại — khoảng 6 phút.
+1. **Vocabulary:** tối đa 10 từ mới/ôn lại — khoảng 6–8 phút. Gia đình chọn ưu tiên Movers nếu con đã vững Starters, hoặc ưu tiên củng cố Starters.
 2. **Grammar:** đọc giải thích rồi làm 5 câu — khoảng 5 phút.
 3. **Listening:** 2 câu — khoảng 5 phút.
 4. **Reading:** 2 câu — khoảng 5 phút.
@@ -64,10 +69,20 @@ Nội dung ngữ pháp có giải thích tiếng Việt và 3 câu mẫu/tuần.
 6. **Speaking:** 2 gợi ý — khoảng 5 phút.
 7. **Mini quiz:** 5 câu — khoảng 5 phút, có thể làm sau một lần nghỉ ngắn.
 
-Có **240 bài học kỹ năng** và **40 mini quiz**. Bài học được lấy từ ngân hàng của tuần và có ôn lặp lại. Vào Practice để làm các dạng bổ sung và toàn bộ câu hỏi. Với tuần 8, có thể thay một buổi học bằng mock test; tránh cộng dồn thời lượng gây mệt.
+Có **240 bài học kỹ năng** và **40 mini quiz**. Bài học từ vựng hằng ngày ưu tiên từ được giao, từ cần ôn và từ chưa viết đúng; tuần 7–8 dành nhiều hơn cho ôn lại. Vào Kho từ vựng để làm toàn bộ ngân hàng. Với tuần 8, có thể thay một buổi học bằng mock test; tránh cộng dồn thời lượng gây mệt.
+
+### Cách theo dõi từ vựng
+
+- **Đã khám phá:** trẻ đã lật thẻ và xem từ.
+- **Nhận biết được:** trẻ trả lời đúng dạng ghép nghĩa, nghe/chọn hoặc xếp chữ.
+- **Viết đúng:** trẻ tự gõ đúng từ trong bài chính tả.
+- **Cần ôn:** xuất hiện khi trả lời sai; hai lượt ôn đúng giúp bỏ cờ này.
+
+Trạng thái là dữ liệu luyện trên website, không phải đánh giá đầy đủ khả năng dùng từ trong bài thi.
 
 ## Bài kiểm tra và cách chấm
 
+- **Random Challenge:** mỗi lần bắt đầu tạo 25 câu mới, gồm 5 câu Vocabulary, Grammar, Listening, Reading và Writing. Câu hỏi lấy ngẫu nhiên từ ngân hàng có đáp án cố định; Speaking không nằm trong phần này vì website không thể chấm phát âm/nội dung nói tự động. Lượt đang làm được lưu để mở lại sau khi tải trang, kết quả xuất hiện trong lịch sử. Phần thưởng hoàn thành chỉ nhận một lần mỗi ngày.
 - Mini quiz: 5 câu kết hợp từ vựng, ngữ pháp, đọc và viết.
 - Weekly test: 20 câu, mỗi kỹ năng Vocabulary/Grammar/Listening/Reading/Writing có 4 câu; gợi ý 25 phút.
 - Mock Test 1 và 2: mỗi bài 40 câu, mỗi kỹ năng có 8 câu; gợi ý 45 phút. Hai bộ dùng câu khác nhau từ ngân hàng, nhưng có thể gặp lại câu từng luyện.
@@ -91,30 +106,60 @@ Giọng tổng hợp là phương tiện luyện nghe bổ trợ; nên dùng th�
 
 ## Tiến độ, sao và huy hiệu
 
-Dữ liệu lưu bằng khóa **`littleStepsMovers.v1`** trong `localStorage`:
+Mỗi người học có một ID riêng, độc lập với tên. Trong `localStorage`:
+
+- **`littleStepsMovers.profiles.v2`** lưu danh sách ID, tên, avatar và thời điểm tạo hồ sơ.
+- **`littleStepsMovers.profile.<id>`** lưu tiến độ của riêng hồ sơ đó.
+- **`littleStepsMovers.v1`** được giữ nguyên làm bản lưu cũ sau khi tự chuyển dữ liệu hợp lệ sang hồ sơ đầu tiên. Việc chuyển chỉ thực hiện khi chưa có danh sách v2; mở lại trang không tạo thêm bản sao.
+
+Trong mỗi hồ sơ có:
 
 - Tên, tuần/ngày hiện tại, các bài đã hoàn thành.
-- Bài đang làm, vị trí câu hỏi, lựa chọn, bản nháp viết và trạng thái tự kiểm tra. Tải lại trang rồi bấm Continue learning để tiếp tục.
+- Bài đang làm, vị trí câu hỏi, lựa chọn, bản nháp viết và trạng thái tự kiểm tra. Tải lại trang, chọn đúng người học rồi bấm Continue learning để tiếp tục.
 - Danh sách từ đã khám phá, điểm từng câu, câu cần ôn.
 - Sao, lịch ngày học, mục tiêu ngày và tối đa 100 kết quả quiz/test gần nhất.
 
 **Cách nhận sao:** lần đầu trả lời đúng một câu nhận +2; lần đầu hoàn thành một bài/quiz/test nhận +10; hoàn thành đủ 4 mục Vocabulary, Grammar, Listening, Reading trong ngày nhận thêm +20. Lặp lại cùng câu hoặc bài không nhận lại cùng phần thưởng. Hoạt động vẫn được luyện và ghi nhận điểm mới.
 
-**Daily goal:** hoàn thành 4 hoạt động kỹ năng trong ngày thực tế. Mục Vocabulary từ luồng Learn yêu cầu hoàn thành 10 thẻ. Writing và Speaking vẫn thuộc bài học hằng ngày, nhưng không nằm trong 4 mục nhận thưởng này.
+**Daily goal:** hoàn thành 4 hoạt động kỹ năng trong ngày thực tế. Mục Vocabulary từ luồng Learn có tối đa 10 từ. Writing và Speaking vẫn thuộc bài học hằng ngày, nhưng không nằm trong 4 mục nhận thưởng này.
 
 **Streak:** tính theo ngày lịch địa phương của thiết bị. Hôm nay chưa học vẫn giữ chuỗi kết thúc hôm qua; bỏ trọn một ngày thì chuỗi hiện tại về 0. Một câu trả lời hoặc một thẻ đã hoàn thành được tính là hoạt động học. Không tính bằng khoảng thời gian 24 giờ.
 
 **Review Mistakes:** một câu cần 2 lượt trả lời đúng trong chế độ Review để thành Mastered. Trả lời sai lại sẽ đưa câu về 0 lượt đúng và mở lại mục cần ôn. Lặp bấm Check không tăng lượt.
 
-**9 huy hiệu:** First Lesson, 3 Day Streak, 7 Day Streak, 50 Words Learned, Vocabulary Star, Grammar Hero, Listening Star, Perfect Quiz, Movers Champion. Mỗi huy hiệu có điều kiện ghi ngay trên thẻ. Huy hiệu streak dựa trên chuỗi dài nhất đã đạt.
+**9 huy hiệu:** First Lesson, 3 Day Streak, 7 Day Streak, 50 Words Explored, Vocabulary Star, Grammar Hero, Listening Star, Perfect Quiz, Movers Champion. Ngoài ra trang chủ có sổ sticker cho các mốc học và ôn từ. Huy hiệu streak dựa trên chuỗi dài nhất đã đạt.
+
+## Nhiều người học trên cùng máy
+
+Khi mở hoặc tải lại website, màn hình **“Ai đang học hôm nay?”** cho phép chọn hồ sơ. Lần đầu sử dụng, chọn **Thêm người học**, nhập tên/biệt danh và chọn một trong 8 avatar. Không tự tạo người học mẫu nếu chưa có tiến độ cũ.
+
+Hai bạn có thể dùng cùng tên nhưng vẫn có ID khác nhau; 6 ký tự cuối của ID xuất hiện trên thẻ để phân biệt. Mỗi bạn có điểm, sao, câu sai, huy hiệu, streak, lịch sử và bài đang làm riêng.
+
+Để đổi người học, nhấn avatar ở thanh trên (hoặc tên ở menu), rồi chọn **Đổi người học**. Bài đang làm và bản nháp được giữ lại trước khi chuyển; âm thanh và đồng hồ của lượt cũ được dừng. Khi chọn lại người học, nhấn Continue learning để tiếp tục. Thời gian kiểm tra vẫn tính từ lúc bắt đầu lượt, vì vậy thời gian gợi ý có thể đã hết sau khi nghỉ lâu; con vẫn được làm tiếp.
+
+Đổi tên/avatar giữ nguyên ID và tiến độ. Ngoài các avatar emoji có sẵn, có thể chọn ảnh PNG, JPG hoặc WebP dưới 5 MB trong phần quản lý hồ sơ. Website tự cắt giữa ảnh thành hình vuông 160×160 và nén ảnh trước khi lưu cục bộ; ảnh đi kèm file xuất tiến độ nhưng không được tải lên máy chủ. **Đặt lại hồ sơ này** yêu cầu nhập `RESET`, chỉ xóa dữ liệu học của hồ sơ đang chọn; tên, avatar và các người học khác vẫn giữ nguyên.
+
+Các tab chọn người học độc lập; việc ghi tiến độ của người này không ghi lại toàn bộ dữ liệu người khác. Nếu cùng một hồ sơ có bản lưu mới ở tab khác, lượt ghi tiếp theo bị chặn để tránh ghi đè; xuất bản nháp nếu cần rồi tải lại hoặc chọn lại hồ sơ đó để lấy dữ liệu mới. Đây không phải đồng bộ đồng thời cho cùng một người học.
+
+## Xuất/nhập tiến độ
+
+**Xuất:** nhấn avatar → Xuất tiến độ, hoặc dùng nút xuất trên Progress. File chỉ chứa người học đang chọn, có tên và một phần ID trong tên file. Định dạng mới có `format: "little-steps-profile"`, `version: 2`, thông tin `profile` và dữ liệu `progress`.
+
+**Nhập:** chọn Nhập tiến độ trên màn hình chọn người học hoặc trong phần quản lý hồ sơ. Chọn file JSON dưới 2 MB. Website kiểm tra cấu trúc, câu hỏi, lịch sử và bài đang làm trước khi hiển thị bản xem trước. Bản JSON xuất từ phiên bản một người học trước đây cũng được hỗ trợ.
+
+- **Tạo hồ sơ mới** (mặc định): cấp ID mới và giữ tên/avatar trong file; không ghi đè hồ sơ cùng tên hoặc cùng ID nguồn.
+- **Khôi phục hồ sơ đang chọn:** phải chọn phương án này và đánh dấu xác nhận. Toàn bộ tiến độ của hồ sơ đích được thay bằng file; tên/avatar/ID của hồ sơ đích vẫn giữ nguyên. Nên xuất bản hiện tại trước khi khôi phục.
+- Đóng cửa sổ xem trước để hủy; chọn file hoặc xem trước không tự thay đổi dữ liệu. Nhập không tự gộp hai bản tiến độ.
+
+Có thể dùng file JSON để chuyển tiến độ thủ công sang máy khác hoặc từ bản `file://` sang website đã deploy. **Chưa có đồng bộ tự động hay đăng nhập trực tuyến.**
 
 ## Dữ liệu cá nhân
 
-Không đăng nhập, không analytics, không gửi bài làm lên server. Nhấn avatar/tên ở menu để đổi tên, tải bản sao JSON hoặc xóa tiến độ. Xóa dữ liệu cần nhập `RESET` để tránh nhấn nhầm. Nút xuất JSON cũng nằm trên Progress.
+Không đăng nhập, không analytics, không gửi bài làm lên server. Hồ sơ cục bộ giúp tách tiến độ; mọi người dùng chung trình duyệt đều có thể chọn các hồ sơ này. Đây không phải cơ chế bảo mật bằng tài khoản.
 
-Tiến độ chỉ thuộc **trình duyệt và địa chỉ đang mở**. Dữ liệu của file trực tiếp, localhost và website đã deploy không tự chia sẻ. Trình duyệt khác, chế độ riêng tư hoặc xóa site data có thể làm mất tiến độ. Bản JSON xuất ra phục vụ lưu trữ/đối chiếu; phiên bản này **chưa có nhập dữ liệu hay đồng bộ thiết bị**.
+Tiến độ chỉ thuộc **trình duyệt và địa chỉ đang mở**. Dữ liệu của file trực tiếp, localhost và website đã deploy không tự chia sẻ. Trình duyệt khác, chế độ riêng tư hoặc xóa site data có thể làm mất tiến độ.
 
-Nếu trình duyệt chặn lưu hoặc dữ liệu JSON bị hỏng, website hiển thị thông báo và vẫn cho học trong phiên hiện tại. Nên xuất tiến độ trước khi đóng trang trong trường hợp này.
+Nếu trình duyệt chặn lưu hoặc hết dung lượng, website hiển thị thông báo và giữ các hồ sơ trong bộ nhớ của phiên hiện tại. Hãy lần lượt chọn và xuất tiến độ các hồ sơ trước khi đóng trang. Hồ sơ có dữ liệu hỏng không bị tự đặt lại; có thể nhập bản sao hợp lệ thành hồ sơ mới để tiếp tục.
 
 ## Deploy hosting tĩnh
 
@@ -142,19 +187,31 @@ Mở `js/data.js`:
 
 Giữ ID ổn định khi sửa nội dung đã phát hành vì tiến độ/câu sai tham chiếu theo ID. Nếu thay hẳn cấu trúc ngân hàng, hãy tăng phiên bản dữ liệu/lưu trữ và cung cấp hướng chuyển đổi hoặc hướng dẫn bắt đầu lại.
 
+## Kiểm thử lưu trữ
+
+Không cần cài dependency. Nếu có Node.js, chạy:
+
+```sh
+node --test tests/storage.test.cjs
+```
+
+Bộ kiểm thử bao phủ tách hồ sơ, tên trùng, phần thưởng độc lập, nâng cấp v1 một lần, nhập/xuất, từ chối JSON không hợp lệ, các tab cùng/khác hồ sơ và trường hợp localStorage bị chặn.
+
+Phiên bản nhiều người học đã vượt qua **6 bài kiểm thử lưu trữ** và **10 nhóm kiểm thử Chrome**: tạo/chuyển hồ sơ, khôi phục câu hỏi và bản nháp, tên/avatar, xuất riêng từng người, xem trước và xác nhận nhập, file v1/file hỏng, đặt lại độc lập, giao diện 834/390/320px, nâng cấp dữ liệu cũ có lịch sử quiz và lưu tạm khi trình duyệt chặn localStorage. Không ghi nhận lỗi JavaScript trong các luồng này.
+
 ## Checklist nghiệm thu thủ công
 
 Đã kiểm thử tự động trên Chrome bằng cách mở `file://`: 15 nhóm kiểm tra luồng học, quiz/test, lưu và khôi phục bài, câu sai, huy hiệu, tên người học, xuất JSON, dữ liệu hỏng và localStorage bị chặn. Các màn hình chính được kiểm tra ở chiều rộng 1440, 834, 390 và 320px, không tràn ngang; không ghi nhận lỗi JavaScript hoặc request HTTP(S) trong luồng sử dụng. Logic streak qua ngày/tháng, ngày bỏ học và chống nhận thưởng trùng cũng được kiểm tra riêng. Kiểm tra kết nối SpeechSynthesis dùng giọng giả lập trong tự động hóa; chất lượng âm thanh thực tế cần kiểm tra bằng tai trên thiết bị sử dụng.
 
-1. Mở `index.html`, chọn Learn, tuần và ngày; kiểm tra 6 bài kỹ năng.
+1. Mở `index.html`, tạo/chọn hồ sơ, chọn Learn, tuần và ngày; kiểm tra 6 bài kỹ năng.
 2. Học 10 thẻ, hoàn thành ngữ pháp, nghe và đọc; xác nhận mục tiêu ngày và sao.
 3. Làm sai một câu, kiểm tra Review Mistakes, ôn đúng hai lượt và kiểm tra Mastered.
-4. Đang làm bài thì tải lại trang; xác nhận lựa chọn/bản nháp và vị trí được giữ.
+4. Đang làm bài thì đổi hồ sơ hoặc tải lại trang, chọn lại người học và Continue learning; xác nhận lựa chọn/bản nháp và vị trí được giữ.
 5. Làm lại cùng mini quiz; kiểm tra điểm lưu mới nhưng không cộng sao trùng.
 6. Làm weekly test và hai mock test; kiểm tra tổng số câu, phân tích kỹ năng và lịch sử.
 7. Luyện viết tự do và nói: cần tự kiểm tra, không hiện điểm đúng tự động.
 8. Kiểm tra Listen/Again bằng giọng tiếng Anh thật trên thiết bị; thử luồng lời thoại thay thế.
-9. Đổi tên, tải lại trang, xuất JSON; chỉ thử xóa sau khi đã lưu bản sao cần thiết.
+9. Tạo hai hồ sơ trùng tên; kiểm tra điểm độc lập. Xuất/nhập thành hồ sơ mới, thử khôi phục có xác nhận, hủy nhập và chọn file hỏng. Đặt lại một hồ sơ rồi kiểm tra hồ sơ còn lại.
 10. Kiểm tra các màn hình ở desktop, tablet và mobile; có thể dùng bàn phím Tab/Enter.
 
 Toàn bộ câu hỏi, truyện, lời thoại và tranh trong dự án được tự biên soạn. Không sao chép đề thi, sách hay hình ảnh Cambridge.
