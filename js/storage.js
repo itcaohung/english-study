@@ -127,7 +127,7 @@
     catch (_) { /* Use the in-memory profile when storage is denied. */ }
     if (memory.has(id) && (raw === savedCopies.get(id) || raw === null)) next = memory.get(id);
     else {
-      if (!raw) throw new Error('Chưa mở được hành trình của bạn này. Nhờ người lớn giúp chọn bản sao lưu để khôi phục nhé.');
+      if (!raw) throw new Error('Chưa mở được hành trình của bạn này. Nhờ người lớn giúp con bắt đầu lại nhé.');
       next = validateProgress(parse(raw));
     }
     // A profile changed in another tab must be loaded from its latest saved copy.
@@ -155,24 +155,6 @@
     state.name = name; state.avatar = avatar;
     if (!conflict) { save(); if (!conflict) updateMetadata(); }
   }
-  function previewImport(text) {
-    const file = parse(text);
-    if (file?.format === 'little-steps-profile') {
-      if (file.version !== 2 || !object(file.profile)) invalid();
-      return validateProgress(file.progress);
-    }
-    return validateProgress(file); // Accept v1 JSON exports too.
-  }
-  function importProgress(progress, mode) {
-    const data = validateProgress(progress);
-    if (mode === 'new') return createProfile(data.name, data.avatar, data);
-    if (mode !== 'replace' || !activeId) throw new Error('Hãy chọn hồ sơ cần khôi phục.');
-    // Keep the target identity; importing never links two local learners by name or ID.
-    const name = state.name, avatar = state.avatar;
-    if (!save() && conflict) throw new Error(warning);
-    state = {...data, name, avatar}; save();
-    return activeId;
-  }
   function exportProfile() {
     return {format: 'little-steps-profile', version: 2, exportedAt: new Date().toISOString(), profile: {id: activeId, name: state.name, avatar: state.avatar}, progress: state};
   }
@@ -188,7 +170,7 @@
         } else createProfile('Bạn nhỏ', '🦉');
       }
     } catch (_) {
-      warning = 'Ôi, Little Steps chưa mở được hành trình đã lưu. Con có thể bắt đầu một hành trình mới. Nếu gia đình có bản sao tiến độ, hãy nhờ người lớn giúp con khôi phục nhé.';
+      warning = 'Ôi, Little Steps chưa mở được hành trình đã lưu. Con có thể bắt đầu một hành trình mới nhé.';
       if (!registry.profiles.length) {
         try { createProfile('Bạn nhỏ', '🦉'); }
         catch (_) { /* The in-memory profile is still available when browser storage is blocked. */ }
@@ -271,5 +253,5 @@
     (window.MoversData.wordBank || []).forEach(v=>counts[wordStatus(v.id)]++);return counts;
   }
   initialize();
-  window.MoversStore = {get state() { return state; }, get warning() { return warning; }, get conflict() { return conflict; }, get activeId() { return activeId; }, avatars, listProfiles, createProfile, selectProfile, rename, previewImport, importProgress, exportProfile, validateProgress, dateKey, save, reward, touch, streak, answer, complete, reset, exploreWord, wordStatus, wordStats};
+  window.MoversStore = {get state() { return state; }, get warning() { return warning; }, get conflict() { return conflict; }, get activeId() { return activeId; }, avatars, listProfiles, createProfile, selectProfile, rename, exportProfile, validateProgress, dateKey, save, reward, touch, streak, answer, complete, reset, exploreWord, wordStatus, wordStats};
 })();

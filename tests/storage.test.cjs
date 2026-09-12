@@ -55,33 +55,13 @@ test('Legacy progress migrates exactly once; original key and data survive', () 
   assert.equal(reloaded.listProfiles().length, 1);
   reloaded.selectProfile(id); assert.equal(reloaded.state.stars, 250);
 });
-test('Validated export/import creates a new ID or replaces only target progress', () => {
-  const {store: s, db} = context();
-  const a = s.createProfile('Alex', '🐯'); s.state.stars = 75; s.save();
-  const backup = JSON.stringify(s.exportProfile());
-  const parsed = s.previewImport(backup);
-  const before = db.get(INDEX); s.previewImport(backup); assert.equal(db.get(INDEX), before);
-  const b = s.importProgress(parsed, 'new');
-  assert.notEqual(a, b); assert.equal(s.state.stars, 75);
-  s.rename('Mai', '🐱'); s.state.stars = 12; s.save();
-  s.importProgress(parsed, 'replace'); assert.equal(s.state.stars, 75); assert.equal(s.state.name, 'Mai'); assert.equal(s.state.avatar, '🐱');
-  s.selectProfile(a); assert.equal(s.state.name, 'Alex'); assert.equal(s.state.avatar, '🐯');
-  assert.equal(s.previewImport(JSON.stringify(parsed)).stars, 75); // Original v1 export format.
-});
-test('Malformed/nested invalid/prototype-polluting imports are rejected before mutation', () => {
-  const {store: s, db} = context(); s.createProfile('An');
-  const before = [...db.entries()];
-  assert.throws(() => s.previewImport('{broken'));
-  assert.throws(() => s.previewImport('{"__proto__":{"polluted":true}}'));
-  const bad = plain(s.state); bad.answers.fake = {correct: true};
-  assert.throws(() => s.previewImport(JSON.stringify(bad)));
-  const invalidDaily = plain(s.state); invalidDaily.daily['2026-09-12'] = 'grammar';
-  assert.throws(() => s.previewImport(JSON.stringify(invalidDaily)));
-  const invalidWeek = plain(s.state); invalidWeek.currentWeek = 99;
-  assert.throws(() => s.previewImport(JSON.stringify(invalidWeek)));
-  const invalidSession = plain(s.state); invalidSession.activeSession = {kind: 'lesson', index: 999};
-  assert.throws(() => s.previewImport(JSON.stringify(invalidSession)));
-  assert.deepEqual([...db.entries()], before);
+test('Storage API keeps backup export but does not expose file restore', () => {
+  const {store: s} = context();
+  const backup = s.exportProfile();
+  assert.equal(backup.format, 'little-steps-profile');
+  assert.equal(backup.progress.name, s.state.name);
+  assert.equal(s.previewImport, undefined);
+  assert.equal(s.importProgress, undefined);
 });
 test('Different tabs cannot overwrite sibling profiles or a newer same-profile save', () => {
   const db = new Map(), tab1 = context(db).store;
@@ -129,5 +109,5 @@ test('A compact custom avatar is accepted and preserved in an exported profile',
   const avatar = 'data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAP//////////////////////////////////////////////////////////////////////////////////////2wBDAf//////////////////////////////////////////////////////////////////////////////////////wAARCAABAAEDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAf/xAAUEAEAAAAAAAAAAAAAAAAAAAAA/9oADAMBAAIQAxAAAAE//8QAFBABAAAAAAAAAAAAAAAAAAAAAP/aAAgBAQABBQJ//8QAFBEBAAAAAAAAAAAAAAAAAAAAAP/aAAgBAwEBPwF//8QAFBEBAAAAAAAAAAAAAAAAAAAAAP/aAAgBAgEBPwF//8QAFBABAAAAAAAAAAAAAAAAAAAAAP/aAAgBAQAGPwJ//8QAFBABAAAAAAAAAAAAAAAAAAAAAP/aAAgBAQABPyF//9k=';
   s.createProfile('An', avatar);
   assert.equal(s.state.avatar, avatar);
-  assert.equal(s.previewImport(JSON.stringify(s.exportProfile())).avatar, avatar);
+  assert.equal(s.exportProfile().progress.avatar, avatar);
 });

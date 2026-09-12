@@ -141,17 +141,9 @@ Hai bạn có thể dùng cùng tên nhưng vẫn có ID khác nhau; 6 ký tự 
 
 Các tab chọn người học độc lập; việc ghi tiến độ của người này không ghi lại toàn bộ dữ liệu người khác. Nếu cùng một hồ sơ có bản lưu mới ở tab khác, lượt ghi tiếp theo bị chặn để tránh ghi đè; xuất bản nháp nếu cần rồi tải lại hoặc chọn lại hồ sơ đó để lấy dữ liệu mới. Đây không phải đồng bộ đồng thời cho cùng một người học.
 
-## Xuất/nhập tiến độ
+## Sao lưu tiến độ
 
-**Xuất:** nhấn avatar → Xuất tiến độ, hoặc dùng nút xuất trên Progress. File chỉ chứa người học đang chọn, có tên và một phần ID trong tên file. Định dạng mới có `format: "little-steps-profile"`, `version: 2`, thông tin `profile` và dữ liệu `progress`.
-
-**Nhập:** chọn Nhập tiến độ trên màn hình chọn người học hoặc trong phần quản lý hồ sơ. Chọn file JSON dưới 2 MB. Website kiểm tra cấu trúc, câu hỏi, lịch sử và bài đang làm trước khi hiển thị bản xem trước. Bản JSON xuất từ phiên bản một người học trước đây cũng được hỗ trợ.
-
-- **Tạo hồ sơ mới** (mặc định): cấp ID mới và giữ tên/avatar trong file; không ghi đè hồ sơ cùng tên hoặc cùng ID nguồn.
-- **Khôi phục hồ sơ đang chọn:** phải chọn phương án này và đánh dấu xác nhận. Toàn bộ tiến độ của hồ sơ đích được thay bằng file; tên/avatar/ID của hồ sơ đích vẫn giữ nguyên. Nên xuất bản hiện tại trước khi khôi phục.
-- Đóng cửa sổ xem trước để hủy; chọn file hoặc xem trước không tự thay đổi dữ liệu. Nhập không tự gộp hai bản tiến độ.
-
-Có thể dùng file JSON để chuyển tiến độ thủ công sang máy khác hoặc từ bản `file://` sang website đã deploy. **Chưa có đồng bộ tự động hay đăng nhập trực tuyến.**
+Một người lớn có thể nhấn avatar → **Sao lưu tiến độ**, hoặc dùng nút sao lưu trên Progress, để lưu một bản sao của hồ sơ đang chọn. Website không có chức năng nhập hay khôi phục từ tệp; mỗi bạn bắt đầu và tiếp tục hồ sơ riêng ngay trên thiết bị.
 
 ## Dữ liệu cá nhân
 
@@ -195,13 +187,13 @@ Không cần cài dependency. Nếu có Node.js, chạy:
 node --test tests/storage.test.cjs
 ```
 
-Bộ kiểm thử bao phủ tách hồ sơ, tên trùng, phần thưởng độc lập, nâng cấp v1 một lần, nhập/xuất, từ chối JSON không hợp lệ, các tab cùng/khác hồ sơ và trường hợp localStorage bị chặn.
+Bộ kiểm thử bao phủ tách hồ sơ, tên trùng, phần thưởng độc lập, nâng cấp v1 một lần, sao lưu tiến độ, các tab cùng/khác hồ sơ và trường hợp localStorage bị chặn.
 
-Phiên bản nhiều người học đã vượt qua **6 bài kiểm thử lưu trữ** và **10 nhóm kiểm thử Chrome**: tạo/chuyển hồ sơ, khôi phục câu hỏi và bản nháp, tên/avatar, xuất riêng từng người, xem trước và xác nhận nhập, file v1/file hỏng, đặt lại độc lập, giao diện 834/390/320px, nâng cấp dữ liệu cũ có lịch sử quiz và lưu tạm khi trình duyệt chặn localStorage. Không ghi nhận lỗi JavaScript trong các luồng này.
+Phiên bản nhiều người học đã vượt qua **7 bài kiểm thử lưu trữ** và **10 nhóm kiểm thử Chrome**: tạo/chuyển hồ sơ, khôi phục câu hỏi và bản nháp, tên/avatar, sao lưu riêng từng người, đặt lại độc lập, giao diện 834/390/320px, nâng cấp dữ liệu cũ có lịch sử quiz và lưu tạm khi trình duyệt chặn localStorage. Không ghi nhận lỗi JavaScript trong các luồng này.
 
 ## Checklist nghiệm thu thủ công
 
-Đã kiểm thử tự động trên Chrome bằng cách mở `file://`: 15 nhóm kiểm tra luồng học, quiz/test, lưu và khôi phục bài, câu sai, huy hiệu, tên người học, xuất JSON, dữ liệu hỏng và localStorage bị chặn. Các màn hình chính được kiểm tra ở chiều rộng 1440, 834, 390 và 320px, không tràn ngang; không ghi nhận lỗi JavaScript hoặc request HTTP(S) trong luồng sử dụng. Logic streak qua ngày/tháng, ngày bỏ học và chống nhận thưởng trùng cũng được kiểm tra riêng. Kiểm tra kết nối SpeechSynthesis dùng giọng giả lập trong tự động hóa; chất lượng âm thanh thực tế cần kiểm tra bằng tai trên thiết bị sử dụng.
+Đã kiểm thử tự động trên Chrome bằng cách mở `file://`: 15 nhóm kiểm tra luồng học, quiz/test, lưu và khôi phục bài, câu sai, huy hiệu, tên người học, sao lưu tiến độ, dữ liệu hỏng và localStorage bị chặn. Các màn hình chính được kiểm tra ở chiều rộng 1440, 834, 390 và 320px, không tràn ngang; không ghi nhận lỗi JavaScript hoặc request HTTP(S) trong luồng sử dụng. Logic streak qua ngày/tháng, ngày bỏ học và chống nhận thưởng trùng cũng được kiểm tra riêng. Kiểm tra kết nối SpeechSynthesis dùng giọng giả lập trong tự động hóa; chất lượng âm thanh thực tế cần kiểm tra bằng tai trên thiết bị sử dụng.
 
 1. Mở `index.html`, tạo/chọn hồ sơ, chọn Learn, tuần và ngày; kiểm tra 6 bài kỹ năng.
 2. Học 10 thẻ, hoàn thành ngữ pháp, nghe và đọc; xác nhận mục tiêu ngày và sao.
@@ -211,7 +203,7 @@ Phiên bản nhiều người học đã vượt qua **6 bài kiểm thử lưu 
 6. Làm weekly test và hai mock test; kiểm tra tổng số câu, phân tích kỹ năng và lịch sử.
 7. Luyện viết tự do và nói: cần tự kiểm tra, không hiện điểm đúng tự động.
 8. Kiểm tra Listen/Again bằng giọng tiếng Anh thật trên thiết bị; thử luồng lời thoại thay thế.
-9. Tạo hai hồ sơ trùng tên; kiểm tra điểm độc lập. Xuất/nhập thành hồ sơ mới, thử khôi phục có xác nhận, hủy nhập và chọn file hỏng. Đặt lại một hồ sơ rồi kiểm tra hồ sơ còn lại.
+9. Tạo hai hồ sơ trùng tên; kiểm tra điểm độc lập. Sao lưu từng hồ sơ và đặt lại một hồ sơ rồi kiểm tra hồ sơ còn lại.
 10. Kiểm tra các màn hình ở desktop, tablet và mobile; có thể dùng bàn phím Tab/Enter.
 
 Toàn bộ câu hỏi, truyện, lời thoại và tranh trong dự án được tự biên soạn. Không sao chép đề thi, sách hay hình ảnh Cambridge.

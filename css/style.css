@@ -3730,7 +3730,6 @@ body.modal-open { overflow:hidden; }
 .add-learner { background: transparent; border-style: dashed; color: #74896a; }
 .add-learner > span:last-child { font-size: 12px; }
 .add-learner .learner-avatar { background: #eef2e8; color: #8aa275; font-size: 36px; }
-.picker-actions { display: flex; justify-content: center; margin: 28px 0 18px; }
 .picker-note { text-align: center; color: #7b8b72; font-size: 12px; line-height: 1.9; }
 .profile-switch-row { display: flex; gap: 10px; justify-content: space-between; align-items: center; margin-bottom: 24px; flex-wrap: wrap; }
 .profile-file-actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 16px; }
@@ -3742,14 +3741,6 @@ body.modal-open { overflow:hidden; }
 .avatar-options input:checked + span { border-color: #779e53; background: #eaf2df; }
 .avatar-options input:focus-visible + span { outline: 3px solid #719d47; outline-offset: 3px; }
 .avatar-options .avatar-upload { display:grid; grid-template-columns:44px; justify-items:center; gap:3px; color:#6e8065; font-size:9px; }.avatar-options .avatar-upload span { overflow:hidden; background:#eef5e7; color:#71995b; }.avatar-options .avatar-upload small { font-size:9px; }.avatar-help { width:100%; margin:-10px 0 8px; color:#74836d; font-size:11px; line-height:1.45; }
-.import-preview { background: #f3f7ed; padding: 22px; border-radius: 16px; text-align: center; }
-.import-preview .learner-avatar { margin: 0 auto 12px; width: 66px; height: 66px; font-size: 38px; }
-.import-preview h3 { font-size: 23px; margin-bottom: 8px; overflow-wrap: anywhere; }
-.import-options { border: 0; margin: 22px 0 10px; padding: 0; }
-.import-options legend { font-size: 13px; font-weight: 650; margin-bottom: 12px; }
-.import-options label { display: flex; align-items: flex-start; gap: 9px; min-height: 44px; margin: 8px 0; font-size: 12px; cursor: pointer; }
-.import-options input { flex-shrink: 0; width: 18px; height: 18px; margin: 2px 0; accent-color: #254e3d; }
-.replace-ack { background: #fcf1df; padding: 12px; border-radius: 10px; color: #836b46; }
 .profile-file-actions .btn { flex: 1; }
 @media(max-width: 700px) {
   .learner-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }

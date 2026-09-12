@@ -7,7 +7,7 @@
   const isCustomAvatar = value => typeof value === 'string' && /^data:image\/(?:png|jpeg|webp);base64,[A-Za-z0-9+/=]+$/.test(value);
   const avatarContent = (avatar, label = 'Avatar') => isCustomAvatar(avatar) ? `<img src="${esc(avatar)}" alt="${esc(label)}">` : esc(avatar);
   const skillKeys = Object.keys(D.skills);
-  let learnerChosen = false, pendingImport = null;
+  let learnerChosen = false;
   let route = 'home', selectedWeek = S.state.currentWeek, selectedDay = S.state.currentDay;
   let session = restoreSession(), lastResult = null, historicalResult = null, practiceSkill = 'vocabulary', practiceWeek = S.state.currentWeek, timer = null, audioTimer = null;
   function restoreSession() {
@@ -79,7 +79,7 @@
   function learners() {
     stopAudio(); clearInterval(timer);
     const profiles = S.listProfiles();
-    $('#app').innerHTML = `<main id="main" class="learner-picker" tabindex="-1"><a class="brand" href="#learners"><span class="brand-mark">🌱</span><span>little steps<span class="brand-sub">BIG LITTLE ADVENTURES</span></span></a><section class="picker-intro">${owl('small')}<p class="eyebrow">A LITTLE SPACE OF YOUR OWN</p><h1>Ai đang học hôm nay?</h1><p>Chọn tên của con để tiếp tục cuộc phiêu lưu.</p></section>${S.warning ? `<div class="storage-warning" role="alert">${esc(S.warning)}</div>` : ''}<div class="learner-grid">${profiles.map(p => `<button class="learner-card ${learnerChosen && p.id === S.activeId ? 'selected' : ''}" data-action="select-learner" data-id="${esc(p.id)}"><span class="learner-avatar">${avatarContent(p.avatar, `Avatar của ${p.name}`)}</span><strong>${esc(p.name)}</strong><span class="learner-code">Hồ sơ ${esc(p.id.slice(-6))}</span><span class="learner-start">${learnerChosen && p.id === S.activeId ? 'Đang chọn · Tiếp tục' : 'Let’s learn'} ${icon('arrow', 17)}</span></button>`).join('')}<button class="learner-card add-learner" data-action="add-learner"><span class="learner-avatar">＋</span><strong>Thêm người học</strong><span>Một hành trình mới</span></button></div><div class="picker-actions">${button('↑ Nhập tiến độ từ file', 'import-file', 'secondary')}<input type="file" id="profile-import-file" accept=".json,application/json" hidden></div><p class="picker-note">Mỗi bạn có bài học, điểm và phần thưởng riêng.<br>Hồ sơ lưu trên trình duyệt này; mọi người dùng chung máy có thể chuyển hồ sơ.</p></main>`;
+    $('#app').innerHTML = `<main id="main" class="learner-picker" tabindex="-1"><a class="brand" href="#learners"><span class="brand-mark">🌱</span><span>little steps<span class="brand-sub">BIG LITTLE ADVENTURES</span></span></a><section class="picker-intro">${owl('small')}<p class="eyebrow">A LITTLE SPACE OF YOUR OWN</p><h1>Ai đang học hôm nay?</h1><p>Chọn tên của con để tiếp tục cuộc phiêu lưu.</p></section>${S.warning ? `<div class="storage-warning" role="alert">${esc(S.warning)}</div>` : ''}<div class="learner-grid">${profiles.map(p => `<button class="learner-card ${learnerChosen && p.id === S.activeId ? 'selected' : ''}" data-action="select-learner" data-id="${esc(p.id)}"><span class="learner-avatar">${avatarContent(p.avatar, `Avatar của ${p.name}`)}</span><strong>${esc(p.name)}</strong><span class="learner-code">Hồ sơ ${esc(p.id.slice(-6))}</span><span class="learner-start">${learnerChosen && p.id === S.activeId ? 'Đang chọn · Tiếp tục' : 'Let’s learn'} ${icon('arrow', 17)}</span></button>`).join('')}<button class="learner-card add-learner" data-action="add-learner"><span class="learner-avatar">＋</span><strong>Thêm người học</strong><span>Một hành trình mới</span></button></div><p class="picker-note">Mỗi bạn có bài học, điểm và phần thưởng riêng.<br>Hồ sơ lưu trên trình duyệt này; mọi người dùng chung máy có thể chuyển hồ sơ.</p></main>`;
   }
   function addLearner() {
     modal('Một người bạn mới 🌱', `<form id="add-learner-form"><label class="answer-label" for="learner-name">Tên hoặc biệt danh</label><input id="learner-name" class="answer-input" maxlength="24" required placeholder="Ví dụ: An, Mai…" autocomplete="off">${avatarOptions('🦉')}<p class="muted">Con sẽ bắt đầu với tiến độ riêng. Hồ sơ của các bạn khác vẫn được giữ nguyên.</p><button class="btn primary" type="submit">Tạo hồ sơ & bắt đầu →</button></form>`);
@@ -401,23 +401,11 @@
     } else { document.body.classList.add('modal-open'); requestAnimationFrame(() => dialog.querySelector('button,input,select,textarea')?.focus()); }
   }
   function profile() {
-    modal('Góc học của ' + esc(S.state.name), `<div class="profile-switch-row"><span class="pill avatar-pill">${avatarContent(S.state.avatar, `Avatar của ${S.state.name}`)} Hồ sơ ${esc(S.activeId.slice(-6))}</span>${button('Đổi người học ⇄', 'learners', 'secondary')}</div><form id="profile-form"><label class="answer-label" for="profile-name">Tên của con</label><input id="profile-name" class="answer-input" maxlength="24" required value="${esc(S.state.name)}">${avatarOptions(S.state.avatar)}<button type="submit" class="btn primary">Lưu tên & avatar ✓</button></form><div class="profile-data"><h3>Tiến độ của ${esc(S.state.name)}</h3><p>Xuất file để giữ bản sao hoặc chuyển sang máy khác. Khi nhập, con có thể tạo hồ sơ mới hoặc khôi phục hồ sơ đang chọn.</p><div class="profile-file-actions">${button('↓ Xuất tiến độ', 'export', 'secondary')}${button('↑ Nhập tiến độ', 'import-file', 'secondary')}</div><input type="file" id="profile-import-file" accept=".json,application/json" hidden><hr><details><summary>Đặt lại tiến độ của ${esc(S.state.name)}</summary><p>Chỉ xóa bài học, điểm, sao và lịch sử của <strong>${esc(S.state.name)}</strong>. Tên, avatar và các hồ sơ khác được giữ lại.</p><label>Nhập RESET để xác nhận<input id="reset-confirm" class="answer-input" autocomplete="off"></label>${button('Đặt lại hồ sơ này', 'reset', 'danger')}</details></div>`);
+    modal('Góc học của ' + esc(S.state.name), `<div class="profile-switch-row"><span class="pill avatar-pill">${avatarContent(S.state.avatar, `Avatar của ${S.state.name}`)} Hồ sơ ${esc(S.activeId.slice(-6))}</span>${button('Đổi người học ⇄', 'learners', 'secondary')}</div><form id="profile-form"><label class="answer-label" for="profile-name">Tên của con</label><input id="profile-name" class="answer-input" maxlength="24" required value="${esc(S.state.name)}">${avatarOptions(S.state.avatar)}<button type="submit" class="btn primary">Lưu tên & avatar ✓</button></form><div class="profile-data"><h3>Tiến độ của ${esc(S.state.name)}</h3><p>Một người lớn có thể lưu bản sao tiến độ của con để cất giữ.</p><div class="profile-file-actions">${button('↓ Sao lưu tiến độ', 'export', 'secondary')}</div><hr><details><summary>Đặt lại tiến độ của ${esc(S.state.name)}</summary><p>Chỉ xóa bài học, điểm, sao và lịch sử của <strong>${esc(S.state.name)}</strong>. Tên, avatar và các hồ sơ khác được giữ lại.</p><label>Nhập RESET để xác nhận<input id="reset-confirm" class="answer-input" autocomplete="off"></label>${button('Đặt lại hồ sơ này', 'reset', 'danger')}</details></div>`);
   }
   function exportData() {
     const blob = new Blob([JSON.stringify(S.exportProfile(), null, 2)], {type: 'application/json'}), url = URL.createObjectURL(blob), link = document.createElement('a');
-    link.href = url; link.download = `little-steps-${S.state.name.replace(/[^\p{L}\p{N}-]/gu, '_')}-${S.activeId.slice(-6)}-${S.dateKey()}.json`; document.body.appendChild(link); link.click(); link.remove(); setTimeout(() => URL.revokeObjectURL(url), 1000); toast('Đã xuất tiến độ của ' + S.state.name + '.');
-  }
-  async function readImport(file) {
-    if (!file) return;
-    const targetId = learnerChosen ? S.activeId : null;
-    try {
-      if (file.size > 2 * 1024 * 1024) throw new Error('Tệp tiến độ quá lớn. Hãy chọn tệp dưới 2 MB nhé.');
-      const data = S.previewImport(await file.text());
-      if (targetId !== (learnerChosen ? S.activeId : null)) throw new Error('Hồ sơ đã thay đổi. Hãy chọn lại file cho người học hiện tại.');
-      pendingImport = {data, targetId};
-      closeModal();
-      modal('Xem trước tiến độ', `<div class="import-preview"><span class="learner-avatar">${avatarContent(data.avatar, `Avatar của ${data.name}`)}</span><h3>${esc(data.name)}</h3><p>Tuần ${data.currentWeek} · ${Object.keys(data.completed).filter(k => k.startsWith('lesson-')).length} bài học · ${data.stars} sao</p><p>${data.history.length} kết quả kiểm tra · ${data.activeSession ? 'Có bài đang làm' : 'Không có bài đang làm'}</p></div><form id="import-form"><fieldset class="import-options"><legend>Con muốn nhập như thế nào?</legend><label><input type="radio" name="import-mode" value="new" checked> Tạo hồ sơ mới cho ${esc(data.name)}</label>${targetId ? `<label><input type="radio" name="import-mode" value="replace"> Khôi phục tiến độ cho ${esc(S.state.name)} (hồ sơ ${esc(targetId.slice(-6))})</label><label class="replace-ack"><input type="checkbox" id="replace-ack"> Tôi hiểu khôi phục sẽ thay toàn bộ tiến độ của hồ sơ đang chọn; tên và avatar vẫn giữ nguyên.</label>` : ''}</fieldset><p class="muted">Các hồ sơ khác không bị thay đổi. File xuất từ phiên bản cũ cũng được hỗ trợ.</p><button type="submit" class="btn primary">Xác nhận nhập tiến độ</button></form>`);
-    } catch (error) { pendingImport = null; toast(error instanceof SyntaxError ? 'Chưa đọc được tệp tiến độ. Hãy chọn tệp đã xuất từ Little Steps nhé.' : error.message); }
+    link.href = url; link.download = `little-steps-${S.state.name.replace(/[^\p{L}\p{N}-]/gu, '_')}-${S.activeId.slice(-6)}-${S.dateKey()}.json`; document.body.appendChild(link); link.click(); link.remove(); setTimeout(() => URL.revokeObjectURL(url), 1000); toast('Đã lưu bản sao tiến độ của ' + S.state.name + '.');
   }
   function navigate() {
     const next = location.hash.slice(1).split('?')[0] || 'home';
@@ -442,7 +430,6 @@
       case 'select-learner': selectLearner(id); break;
       case 'add-learner': addLearner(); break;
       case 'learners': if (learnerChosen && !S.conflict) persistSession(); closeModal(); if (location.hash === '#learners') learners(); else location.hash = 'learners'; break;
-      case 'import-file': $('#profile-import-file')?.click(); break;
       case 'reload': location.reload(); break;
       case 'continue': {historicalResult = null; if (session && !session.finished) {if (location.hash === '#lesson') renderSession(); else location.hash = 'lesson'; break;} const n = nextLesson(S.state.currentWeek, S.state.currentDay); startLesson(n.week, n.day, n.skill); break;}
       case 'lesson': startLesson(Number(week), Number(day), skill); break;
@@ -484,21 +471,15 @@
     if (e.target.name === 'learner-avatar') { delete e.target.closest('form').dataset.customAvatar; }
     if (e.target.id === 'learning-track') {S.state.learningTrack=e.target.value;S.save();toast('Đã cập nhật nhịp học cho '+S.state.name+'.');}
     if (['bank-level','bank-topic','bank-status'].includes(e.target.id)) {if(e.target.id==='bank-level')bankLevel=e.target.value;if(e.target.id==='bank-topic')bankTopic=e.target.value;if(e.target.id==='bank-status')bankStatus=e.target.value;$('#bank-results').innerHTML=bankResults();}
-    if (e.target.id === 'profile-import-file') {const file = e.target.files[0]; e.target.value = ''; readImport(file);}
     if (e.target.id === 'practice-week') {practiceWeek = Number(e.target.value); practice();}
     if (e.target.id === 'practice-skill') {practiceSkill = e.target.value; practice();}
   });
   document.addEventListener('submit', e => {
-    if (['profile-form', 'add-learner-form', 'import-form'].includes(e.target.id)) e.preventDefault();
+    if (['profile-form', 'add-learner-form'].includes(e.target.id)) e.preventDefault();
     if (e.target.id === 'add-learner-form') {
       try {if (learnerChosen && !S.conflict) persistSession(); S.createProfile($('#learner-name').value, selectedAvatar(e.target)); adoptProfile(); toast('Chào mừng ' + S.state.name + '! 🌱');} catch (error) {toast(error.message);} return;
     }
     if (S.conflict) { toast(S.warning); return; }
-    if (e.target.id === 'import-form' && pendingImport) {
-      const mode = e.target.querySelector('[name="import-mode"]:checked').value;
-      if (mode === 'replace' && (!$('#replace-ack')?.checked || pendingImport.targetId !== S.activeId)) {toast('Hãy xác nhận thay tiến độ của đúng hồ sơ đang chọn.'); return;}
-      try {if (learnerChosen) persistSession(); S.importProgress(pendingImport.data, mode); pendingImport = null; adoptProfile(); toast('Đã nhập tiến độ cho ' + S.state.name + '.');} catch (error) {toast(error.message);} return;
-    }
     if (e.target.id === 'answer-form') {e.preventDefault(); checkAnswer();}
     if (e.target.id === 'profile-form') {const name = $('#profile-name').value.trim(); if (!name) return; try {S.rename(name, selectedAvatar(e.target)); closeModal(); navigate(); toast('Hello, ' + name + '! 👋');} catch (error) {toast(error.message);}}
   });
