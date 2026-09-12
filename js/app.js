@@ -367,6 +367,18 @@
     session.checked = true;
     renderSession();
   }
+  function chooseAnswer(value) {
+    if (!session || session.checked) return;
+    session.chosen = value;
+    document.querySelectorAll('.option[data-action="choose"]').forEach(option => {
+      const chosen = option.dataset.value === value;
+      option.classList.toggle('chosen', chosen);
+      option.setAttribute('aria-pressed', String(chosen));
+    });
+    const check = $('[data-action="check"]');
+    if (check) check.disabled = false;
+    persistSession();
+  }
   function selfComplete() {
     const q = session.questions[session.index];
     if (session.checked) return;
@@ -479,7 +491,7 @@
       case 'random-test': begin(randomTest()); break;
       case 'start-test': {const t = [...D.tests, ...D.mockTests].find(t => t.id === id); if (t) begin({...t}); break;}
       case 'review-start': {const questions = activeMistakes().map(([id]) => D.allQuestions[id]); if (questions.length) begin({kind: 'review', title: 'Review mistakes · A fresh start', questions}); break;}
-      case 'choose': if (session && !session.checked) {session.chosen = value; renderSession(); $('.option.chosen')?.focus();} break;
+      case 'choose': chooseAnswer(value); break;
       case 'check': checkAnswer(); break;
       case 'next': if (session && session.checked) nextQuestion(); break;
       case 'intro-done': session.intro = false; renderSession(); break;
