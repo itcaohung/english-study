@@ -2166,6 +2166,24 @@ td .btn {
   background:#263d3460;
   backdrop-filter:blur(4px)
 }
+.modal-fallback {
+  position:fixed;
+  z-index:1100;
+  inset:50% auto auto 50%;
+  transform:translate(-50%,-50%);
+  display:block;
+  margin:0;
+  background:#fff;
+}
+.modal-fallback:before {
+  content:"";
+  position:fixed;
+  z-index:-1;
+  inset:-100vmax;
+  background:#263d3460;
+  backdrop-filter:blur(4px);
+}
+body.modal-open { overflow:hidden; }
 .modal h2 {
   font-size:20px
 }

@@ -31,7 +31,7 @@
     session = restoreSession(); lastResult = historicalResult = null;
     selectedWeek = practiceWeek = S.state.currentWeek; selectedDay = S.state.currentDay;
     practiceSkill = 'vocabulary'; learnerChosen = true;
-    $('dialog')?.close();
+    closeModal();
     if (location.hash !== '#home') location.hash = 'home'; else navigate();
   }
   function selectLearner(id) {
@@ -380,11 +380,25 @@
     const el = $('#toast'); el.textContent = message; el.hidden = false;
     clearTimeout(toast.timeout); toast.timeout = setTimeout(() => el.hidden = true, 4200);
   }
+  function closeModal() {
+    const dialog = $('.modal');
+    if (!dialog) return;
+    if (dialog.nodeName === 'DIALOG' && typeof dialog.close === 'function') dialog.close();
+    else { dialog._cleanup?.(); dialog.remove(); }
+  }
   function modal(title, content) {
     const previousFocus = document.activeElement;
-    const dialog = document.createElement('dialog'); dialog.className = 'modal';
+    const nativeDialog = typeof HTMLDialogElement !== 'undefined' && typeof document.createElement('dialog').showModal === 'function';
+    const dialog = document.createElement(nativeDialog ? 'dialog' : 'div'); dialog.className = 'modal';
+    if (!nativeDialog) { dialog.classList.add('modal-fallback'); dialog.setAttribute('role', 'dialog'); dialog.setAttribute('aria-modal', 'true'); }
     dialog.innerHTML = `<div class="section-title"><h2>${title}</h2><button class="icon-button" data-action="close-modal" aria-label="Đóng">${icon('close')}</button></div>${content}`;
-    document.body.appendChild(dialog); dialog.addEventListener('close', () => {dialog.remove(); previousFocus?.focus();}); dialog.showModal();
+    const cleanup = () => { dialog.remove(); document.body.classList.remove('modal-open'); previousFocus?.focus(); };
+    dialog._cleanup = cleanup;
+    document.body.appendChild(dialog);
+    if (nativeDialog) {
+      dialog.addEventListener('close', cleanup, {once: true});
+      try { dialog.showModal(); } catch (_) { dialog.remove(); document.body.classList.add('modal-open'); const fallback = document.createElement('div'); fallback.className = 'modal modal-fallback'; fallback.setAttribute('role', 'dialog'); fallback.setAttribute('aria-modal', 'true'); fallback.innerHTML = `<div class="section-title"><h2>${title}</h2><button class="icon-button" data-action="close-modal" aria-label="Đóng">${icon('close')}</button></div>${content}`; fallback._cleanup = () => { fallback.remove(); document.body.classList.remove('modal-open'); previousFocus?.focus(); }; document.body.appendChild(fallback); }
+    } else { document.body.classList.add('modal-open'); requestAnimationFrame(() => dialog.querySelector('button,input,select,textarea')?.focus()); }
   }
   function profile() {
     modal('Góc học của ' + esc(S.state.name), `<div class="profile-switch-row"><span class="pill avatar-pill">${avatarContent(S.state.avatar, `Avatar của ${S.state.name}`)} Hồ sơ ${esc(S.activeId.slice(-6))}</span>${button('Đổi người học ⇄', 'learners', 'secondary')}</div><form id="profile-form"><label class="answer-label" for="profile-name">Tên của con</label><input id="profile-name" class="answer-input" maxlength="24" required value="${esc(S.state.name)}">${avatarOptions(S.state.avatar)}<button type="submit" class="btn primary">Lưu tên & avatar ✓</button></form><div class="profile-data"><h3>Tiến độ của ${esc(S.state.name)}</h3><p>Xuất file để giữ bản sao hoặc chuyển sang máy khác. Khi nhập, con có thể tạo hồ sơ mới hoặc khôi phục hồ sơ đang chọn.</p><div class="profile-file-actions">${button('↓ Xuất tiến độ', 'export', 'secondary')}${button('↑ Nhập tiến độ', 'import-file', 'secondary')}</div><input type="file" id="profile-import-file" accept=".json,application/json" hidden><hr><details><summary>Đặt lại tiến độ của ${esc(S.state.name)}</summary><p>Chỉ xóa bài học, điểm, sao và lịch sử của <strong>${esc(S.state.name)}</strong>. Tên, avatar và các hồ sơ khác được giữ lại.</p><label>Nhập RESET để xác nhận<input id="reset-confirm" class="answer-input" autocomplete="off"></label>${button('Đặt lại hồ sơ này', 'reset', 'danger')}</details></div>`);
@@ -401,7 +415,7 @@
       const data = S.previewImport(await file.text());
       if (targetId !== (learnerChosen ? S.activeId : null)) throw new Error('Hồ sơ đã thay đổi. Hãy chọn lại file cho người học hiện tại.');
       pendingImport = {data, targetId};
-      $('dialog')?.close();
+      closeModal();
       modal('Xem trước tiến độ', `<div class="import-preview"><span class="learner-avatar">${avatarContent(data.avatar, `Avatar của ${data.name}`)}</span><h3>${esc(data.name)}</h3><p>Tuần ${data.currentWeek} · ${Object.keys(data.completed).filter(k => k.startsWith('lesson-')).length} bài học · ${data.stars} sao</p><p>${data.history.length} kết quả kiểm tra · ${data.activeSession ? 'Có bài đang làm' : 'Không có bài đang làm'}</p></div><form id="import-form"><fieldset class="import-options"><legend>Con muốn nhập như thế nào?</legend><label><input type="radio" name="import-mode" value="new" checked> Tạo hồ sơ mới cho ${esc(data.name)}</label>${targetId ? `<label><input type="radio" name="import-mode" value="replace"> Khôi phục tiến độ cho ${esc(S.state.name)} (hồ sơ ${esc(targetId.slice(-6))})</label><label class="replace-ack"><input type="checkbox" id="replace-ack"> Tôi hiểu khôi phục sẽ thay toàn bộ tiến độ của hồ sơ đang chọn; tên và avatar vẫn giữ nguyên.</label>` : ''}</fieldset><p class="muted">Các hồ sơ khác không bị thay đổi. File xuất từ phiên bản cũ cũng được hỗ trợ.</p><button type="submit" class="btn primary">Xác nhận nhập tiến độ</button></form>`);
     } catch (error) { pendingImport = null; toast(error instanceof SyntaxError ? 'Không đọc được JSON. Hãy chọn file tiến độ được xuất từ Little Steps.' : error.message); }
   }
@@ -422,12 +436,12 @@
       case 'bank-practice': bankPractice(mode); break;
       case 'word-detail': wordDetail(id); break;
       case 'word-audio': {const v=D.wordById[id];if(v)speak(v.word);break;}
-      case 'word-card': {const v=D.wordById[id];if(v){$('dialog')?.close();begin({kind:'flashcards',title:'Khám phá một từ',cards:[v],skill:'vocabulary',key:'card-'+id});}break;}
+      case 'word-card': {const v=D.wordById[id];if(v){closeModal();begin({kind:'flashcards',title:'Khám phá một từ',cards:[v],skill:'vocabulary',key:'card-'+id});}break;}
       case 'letter': if(session&&!session.checked){session.draft+=value;renderSession();}break;
       case 'letter-clear': if(session&&!session.checked){session.draft='';renderSession();}break;
       case 'select-learner': selectLearner(id); break;
       case 'add-learner': addLearner(); break;
-      case 'learners': if (learnerChosen && !S.conflict) persistSession(); $('dialog')?.close(); if (location.hash === '#learners') learners(); else location.hash = 'learners'; break;
+      case 'learners': if (learnerChosen && !S.conflict) persistSession(); closeModal(); if (location.hash === '#learners') learners(); else location.hash = 'learners'; break;
       case 'import-file': $('#profile-import-file')?.click(); break;
       case 'reload': location.reload(); break;
       case 'continue': {historicalResult = null; if (session && !session.finished) {if (location.hash === '#lesson') renderSession(); else location.hash = 'lesson'; break;} const n = nextLesson(S.state.currentWeek, S.state.currentDay); startLesson(n.week, n.day, n.skill); break;}
@@ -451,9 +465,9 @@
       case 'self-complete': selfComplete(); break;
       case 'listen': {if (!session) break; const q = session.kind === 'flashcards' ? session.cards[session.index] : session.questions[session.index]; speak(q.audio || (q.word ? `${q.word}. ${q.example || ''}` : q.prompt)); break;}
       case 'leave': modal('Take a little break?', `<p>Câu đã trả lời được lưu. Nếu rời bài, lần sau con bắt đầu lại lượt này từ đầu; sao đã nhận không bị mất.</p><div class="modal-actions">${button('Keep learning', 'close-modal', 'primary')}${button('Back to Learn', 'confirm-leave', 'secondary')}</div>`); break;
-      case 'confirm-leave': $('dialog')?.close(); session = null; persistSession(); location.hash = 'learn'; break;
+      case 'confirm-leave': closeModal(); session = null; persistSession(); location.hash = 'learn'; break;
       case 'profile': profile(); break;
-      case 'close-modal': $('dialog')?.close(); break;
+      case 'close-modal': closeModal(); break;
       case 'export': exportData(); break;
       case 'reset': if ($('#reset-confirm').value === 'RESET') {try {S.reset(); adoptProfile(); toast('Đã đặt lại tiến độ của ' + S.state.name + '.');} catch (error) {toast(error.message);}} else toast('Nhập chính xác RESET nếu muốn đặt lại hồ sơ.'); break;
       case 'history-result': {const r = S.state.history.find(h => h.time === Number(target.dataset.time)); if (r) {historicalResult = r; route = 'lesson'; if (location.hash !== '#lesson') location.hash = 'lesson'; else renderResult(r, true);} break;}
@@ -486,7 +500,7 @@
       try {if (learnerChosen) persistSession(); S.importProgress(pendingImport.data, mode); pendingImport = null; adoptProfile(); toast('Đã nhập tiến độ cho ' + S.state.name + '.');} catch (error) {toast(error.message);} return;
     }
     if (e.target.id === 'answer-form') {e.preventDefault(); checkAnswer();}
-    if (e.target.id === 'profile-form') {const name = $('#profile-name').value.trim(); if (!name) return; try {S.rename(name, selectedAvatar(e.target)); $('dialog').close(); navigate(); toast('Hello, ' + name + '! 👋');} catch (error) {toast(error.message);}}
+    if (e.target.id === 'profile-form') {const name = $('#profile-name').value.trim(); if (!name) return; try {S.rename(name, selectedAvatar(e.target)); closeModal(); navigate(); toast('Hello, ' + name + '! 👋');} catch (error) {toast(error.message);}}
   });
   window.addEventListener('hashchange', navigate);
   window.addEventListener('pagehide', stopAudio);
