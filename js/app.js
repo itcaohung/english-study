@@ -411,13 +411,13 @@
     if (!file) return;
     const targetId = learnerChosen ? S.activeId : null;
     try {
-      if (file.size > 2 * 1024 * 1024) throw new Error('File quá lớn. Chọn bản tiến độ JSON dưới 2 MB.');
+      if (file.size > 2 * 1024 * 1024) throw new Error('Tệp tiến độ quá lớn. Hãy chọn tệp dưới 2 MB nhé.');
       const data = S.previewImport(await file.text());
       if (targetId !== (learnerChosen ? S.activeId : null)) throw new Error('Hồ sơ đã thay đổi. Hãy chọn lại file cho người học hiện tại.');
       pendingImport = {data, targetId};
       closeModal();
       modal('Xem trước tiến độ', `<div class="import-preview"><span class="learner-avatar">${avatarContent(data.avatar, `Avatar của ${data.name}`)}</span><h3>${esc(data.name)}</h3><p>Tuần ${data.currentWeek} · ${Object.keys(data.completed).filter(k => k.startsWith('lesson-')).length} bài học · ${data.stars} sao</p><p>${data.history.length} kết quả kiểm tra · ${data.activeSession ? 'Có bài đang làm' : 'Không có bài đang làm'}</p></div><form id="import-form"><fieldset class="import-options"><legend>Con muốn nhập như thế nào?</legend><label><input type="radio" name="import-mode" value="new" checked> Tạo hồ sơ mới cho ${esc(data.name)}</label>${targetId ? `<label><input type="radio" name="import-mode" value="replace"> Khôi phục tiến độ cho ${esc(S.state.name)} (hồ sơ ${esc(targetId.slice(-6))})</label><label class="replace-ack"><input type="checkbox" id="replace-ack"> Tôi hiểu khôi phục sẽ thay toàn bộ tiến độ của hồ sơ đang chọn; tên và avatar vẫn giữ nguyên.</label>` : ''}</fieldset><p class="muted">Các hồ sơ khác không bị thay đổi. File xuất từ phiên bản cũ cũng được hỗ trợ.</p><button type="submit" class="btn primary">Xác nhận nhập tiến độ</button></form>`);
-    } catch (error) { pendingImport = null; toast(error instanceof SyntaxError ? 'Không đọc được JSON. Hãy chọn file tiến độ được xuất từ Little Steps.' : error.message); }
+    } catch (error) { pendingImport = null; toast(error instanceof SyntaxError ? 'Chưa đọc được tệp tiến độ. Hãy chọn tệp đã xuất từ Little Steps nhé.' : error.message); }
   }
   function navigate() {
     const next = location.hash.slice(1).split('?')[0] || 'home';

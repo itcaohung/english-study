@@ -127,7 +127,7 @@
     catch (_) { /* Use the in-memory profile when storage is denied. */ }
     if (memory.has(id) && (raw === savedCopies.get(id) || raw === null)) next = memory.get(id);
     else {
-      if (!raw) throw new Error('Không đọc được tiến độ của hồ sơ này. Hãy nhập bản sao lưu để khôi phục.');
+      if (!raw) throw new Error('Chưa mở được hành trình của bạn này. Nhờ người lớn giúp chọn bản sao lưu để khôi phục nhé.');
       next = validateProgress(parse(raw));
     }
     // A profile changed in another tab must be loaded from its latest saved copy.
@@ -185,9 +185,9 @@
         if (legacy) {
           const old = validateProgress(parse(legacy));
           createProfile(old.name, old.avatar, old);
-        }
+        } else createProfile('Bạn nhỏ', '🦉');
       }
-    } catch (_) { warning = 'Chưa đọc được dữ liệu đã lưu. Bản lưu cũ được giữ nguyên; con có thể tạo hồ sơ mới hoặc nhập bản sao JSON.'; }
+    } catch (_) { warning = 'Ôi, Little Steps chưa mở được hành trình đã lưu. Con có thể bắt đầu một hành trình mới. Nếu gia đình có bản sao tiến độ, hãy nhờ người lớn giúp con khôi phục nhé.'; }
   }
   function reward(key, amount) {
     if (state.rewards[key]) return 0;

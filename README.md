@@ -131,7 +131,7 @@ Trong mỗi hồ sơ có:
 
 ## Nhiều người học trên cùng máy
 
-Khi mở hoặc tải lại website, màn hình **“Ai đang học hôm nay?”** cho phép chọn hồ sơ. Lần đầu sử dụng, chọn **Thêm người học**, nhập tên/biệt danh và chọn một trong 8 avatar. Không tự tạo người học mẫu nếu chưa có tiến độ cũ.
+Khi mở hoặc tải lại website, màn hình **“Ai đang học hôm nay?”** cho phép chọn hồ sơ. Lần đầu sử dụng, website tạo sẵn hồ sơ **Bạn nhỏ** với avatar cú mèo để có thể bắt đầu ngay. Có thể đổi tên/avatar hoặc chọn **Thêm người học** để tạo hành trình riêng cho mỗi bạn.
 
 Hai bạn có thể dùng cùng tên nhưng vẫn có ID khác nhau; 6 ký tự cuối của ID xuất hiện trên thẻ để phân biệt. Mỗi bạn có điểm, sao, câu sai, huy hiệu, streak, lịch sử và bài đang làm riêng.
 

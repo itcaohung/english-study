@@ -19,9 +19,12 @@ function context(db = new Map(), deny = false) {
   return {store: sandbox.window.MoversStore, data: sandbox.window.MoversData, db};
 }
 function plain(v) {return JSON.parse(JSON.stringify(v));}
-test('No fake learner; same-name learners get distinct IDs and independent rewards', () => {
+test('First visit creates a default learner; same-name learners get distinct IDs and independent rewards', () => {
   const {store: s, data: d, db} = context();
-  assert.equal(s.listProfiles().length, 0);
+  assert.equal(s.listProfiles().length, 1);
+  assert.equal(s.state.name, 'Bạn nhỏ');
+  assert.equal(s.state.avatar, '🦉');
+  assert.ok(db.has(key(s.activeId)));
   const a = s.createProfile('Mai', '🐼');
   s.answer(d.grammarQuestions[0], 'am', false, false);
   s.complete('lesson-1-1-grammar', 'grammar');
