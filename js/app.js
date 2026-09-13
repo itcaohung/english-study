@@ -82,6 +82,7 @@
     stopAudio(); clearInterval(timer);
     const profiles = S.listProfiles();
     $('#app').innerHTML = `<main id="main" class="learner-picker" tabindex="-1"><a class="brand" href="#learners"><span class="brand-mark">🌱</span><span>little steps<span class="brand-sub">BIG LITTLE ADVENTURES</span></span></a><section class="picker-intro">${owl('small')}<p class="eyebrow">A LITTLE SPACE OF YOUR OWN</p><h1>Ai đang học hôm nay?</h1><p>Chọn tên của con để tiếp tục cuộc phiêu lưu.</p></section>${S.warning ? `<div class="storage-warning" role="alert">${esc(S.warning)}</div>` : ''}<div class="learner-grid">${profiles.map(p => `<button class="learner-card ${learnerChosen && p.id === S.activeId ? 'selected' : ''}" data-action="select-learner" data-id="${esc(p.id)}"><span class="learner-avatar">${avatarContent(p.avatar, `Avatar của ${p.name}`)}</span><strong>${esc(p.name)}</strong><span class="learner-start">${learnerChosen && p.id === S.activeId ? 'Đang chọn · Tiếp tục' : 'Let’s learn'} ${icon('arrow', 17)}</span></button>`).join('')}<button class="learner-card add-learner" data-action="add-learner"><span class="learner-avatar">＋</span><strong>Thêm người học</strong><span>Một hành trình mới</span></button></div><p class="picker-note">Mỗi bạn có bài học, điểm và phần thưởng riêng.<br>Hồ sơ lưu trên trình duyệt này; mọi người dùng chung máy có thể chuyển hồ sơ.</p></main>`;
+    bindActionButtons();
   }
   function addLearner() {
     modal('Một người bạn mới 🌱', `<form id="add-learner-form"><label class="answer-label" for="learner-name">Tên hoặc biệt danh</label><input id="learner-name" class="answer-input" maxlength="24" required placeholder="Ví dụ: An, Mai…" autocomplete="off">${avatarOptions('🦉')}<p class="muted">Con sẽ bắt đầu với tiến độ riêng. Hồ sơ của các bạn khác vẫn được giữ nguyên.</p><button class="btn primary" type="submit">Tạo hồ sơ & bắt đầu →</button></form>`);
@@ -127,6 +128,7 @@
     const total = Math.round(completedLessons() / 240 * 100);
     const navItems = [['home', 'Khám phá'], ['learn', 'Hành trình'], ['practice', 'Luyện tập'], ['progress', 'Tiến độ']];
     $('#app').innerHTML = `<aside class="sidebar"><a class="brand" href="#home" aria-label="Little Steps Home"><span class="brand-mark">🌱</span><span>little steps<span class="brand-sub">BIG LITTLE ADVENTURES</span></span></a><div class="course-label">YOUR LEARNING SPACE</div><nav aria-label="Menu chính">${navItems.map(([r, title]) => `<a href="#${r}" class="nav-item ${route === r || route === 'lesson' && r === 'learn' ? 'active' : ''}" ${route === r ? 'aria-current="page"' : ''}>${icon(r)}<span>${title}</span>${r === 'learn' ? '<span class="nav-tag">8</span>' : ''}</a>`).join('')}</nav><div class="sidebar-divider"></div><a href="#words" class="nav-item secondary-nav">📚 <span>Kho từ vựng</span></a><a href="#tests" class="nav-item secondary-nav ${route === 'tests' ? 'active' : ''}">${icon('test')}<span>My tests</span></a><a href="#review" class="nav-item secondary-nav ${route === 'review' ? 'active' : ''}">${icon('review')}<span>Review mistakes</span>${activeMistakes().length ? `<span class="count-bubble">${activeMistakes().length}</span>` : ''}</a><div class="sidebar-bottom"><div class="journey-mini"><div><span>My Movers journey</span><strong>${total}%</strong></div>${bar(total)}<small>Little by little, a lot becomes a little.</small></div><button class="profile-button" data-action="profile"><span class="avatar">${avatarContent(S.state.avatar, `Avatar của ${S.state.name}`)}</span><span><strong>${esc(S.state.name)}</strong><small>Young explorer · Grade 3</small></span>${icon('settings', 17)}</button></div></aside><div class="workspace"><header class="topbar"><div class="breadcrumb">My learning space <span>/</span> <strong>${({home: 'Overview', learn: '8-week adventure', practice: 'Practice studio', progress: 'My progress', tests: 'Test corner', review: 'Try, learn, grow', lesson: 'Learning time'})[route] || 'Learning time'}</strong></div><div class="top-stats"><span class="streak-pill">🔥 <strong>${S.streak()}</strong><span class="hide-small"> day streak</span></span><span class="star-pill">⭐ <strong>${S.state.stars}</strong></span><button class="avatar small" data-action="profile" aria-label="Hồ sơ: ${esc(S.state.name)}. Đổi người học hoặc quản lý tiến độ">${avatarContent(S.state.avatar, `Avatar của ${S.state.name}`)}</button></div></header>${S.warning ? `<div class="storage-warning" role="alert">${esc(S.warning)} ${button('Xuất tiến độ', 'export', 'text')} ${S.conflict ? button('Tải lại trang', 'reload', 'secondary') : ''}</div>` : ''}<main id="main" tabindex="-1">${content}</main><footer>Made for curious minds. <span>🌱</span> A1 Movers practice · Nội dung tự biên soạn, không phải sản phẩm chính thức của Cambridge.</footer></div>`;
+    bindActionButtons();
   }
   function pageHeading(eyebrow, title, subtitle, extra = '') { return `<div class="page-heading"><div><p class="eyebrow">${eyebrow}</p><h1>${title}</h1><p class="subheading">${subtitle}</p></div>${extra}</div>`; }
   const A=window.MoversArt;
@@ -472,6 +474,7 @@
       dialog.addEventListener('close', cleanup, {once: true});
       try { dialog.showModal(); } catch (_) { dialog.remove(); document.body.classList.add('modal-open'); const fallback = document.createElement('div'); fallback.className = 'modal modal-fallback'; fallback.setAttribute('role', 'dialog'); fallback.setAttribute('aria-modal', 'true'); fallback.innerHTML = `<div class="section-title"><h2>${title}</h2><button class="icon-button" data-action="close-modal" aria-label="Đóng">${icon('close')}</button></div>${content}`; fallback._cleanup = () => { fallback.remove(); document.body.classList.remove('modal-open'); previousFocus?.focus(); }; document.body.appendChild(fallback); }
     } else { document.body.classList.add('modal-open'); requestAnimationFrame(() => dialog.querySelector('button,input,select,textarea')?.focus()); }
+    bindActionButtons(dialog);
   }
   function profile() {
     modal('Góc học của ' + esc(S.state.name), `<div class="profile-switch-row"><span class="pill avatar-pill">${avatarContent(S.state.avatar, `Avatar của ${S.state.name}`)} ${esc(S.state.name)}</span>${button('Đổi người học ⇄', 'learners', 'secondary')}</div><form id="profile-form"><label class="answer-label" for="profile-name">Tên của con</label><input id="profile-name" class="answer-input" maxlength="24" required value="${esc(S.state.name)}">${avatarOptions(S.state.avatar)}<button type="submit" class="btn primary">Lưu tên & avatar ✓</button></form><div class="profile-data"><h3>Tiến độ của ${esc(S.state.name)}</h3><p>Một người lớn có thể lưu bản sao tiến độ của con để cất giữ.</p><div class="profile-file-actions">${button('↓ Sao lưu tiến độ', 'export', 'secondary')}</div><hr><details><summary>Đặt lại tiến độ của ${esc(S.state.name)}</summary><p>Chỉ xóa bài học, điểm, sao và lịch sử của <strong>${esc(S.state.name)}</strong>. Tên, avatar và các hồ sơ khác được giữ lại.</p><label>Nhập RESET để xác nhận<input id="reset-confirm" class="answer-input" autocomplete="off"></label>${button('Đặt lại hồ sơ này', 'reset', 'danger')}</details></div>`);
@@ -488,10 +491,10 @@
     ({home, learn, practice, progress, tests, review, words, lesson: renderSession})[route]();
     window.scrollTo({top: 0});
   }
-  // Safari on iPad consistently sends touchend for a finger tap. Keep click for
-  // mouse and keyboard activation, while ignoring its follow-up synthetic click.
+  // Bind to each rendered control. This avoids relying on delegated bubbling,
+  // which is inconsistent for controls that Safari iPad recreates during a tap.
   const touchActions = new WeakSet();
-  const actionTarget = target => target instanceof Element ? target.closest('[data-action]') : null;
+  const boundActions = new WeakSet();
   function handleAction(target) {
     const {action, week, day, skill, id, mode, value} = target.dataset;
     if (S.conflict && !['export', 'learners', 'select-learner', 'close-modal', 'reload', 'add-learner'].includes(action)) { toast(S.warning); return; }
@@ -537,19 +540,24 @@
       case 'history-result': {const r = S.state.history.find(h => h.time === Number(target.dataset.time)); if (r) {historicalResult = r; route = 'lesson'; if (location.hash !== '#lesson') location.hash = 'lesson'; else renderResult(r, true);} break;}
     }
   }
-  document.addEventListener('click', event => {
-    const target = actionTarget(event.target);
-    if (!target || target.disabled || touchActions.has(target)) return;
-    handleAction(target);
-  });
-  document.addEventListener('touchend', event => {
-    const target = actionTarget(event.target);
-    if (!target || target.disabled) return;
-    event.preventDefault();
-    touchActions.add(target);
-    handleAction(target);
-    setTimeout(() => touchActions.delete(target), 800);
-  });
+  function bindActionButtons(root = document) {
+    root.querySelectorAll('[data-action]').forEach(target => {
+      if (boundActions.has(target)) return;
+      boundActions.add(target);
+      target.addEventListener('touchend', event => {
+        if (target.disabled) return;
+        event.preventDefault();
+        touchActions.add(target);
+        handleAction(target);
+        setTimeout(() => touchActions.delete(target), 800);
+      }, {passive: false});
+      target.addEventListener('click', event => {
+        if (target.disabled || touchActions.has(target)) return;
+        event.preventDefault();
+        handleAction(target);
+      });
+    });
+  }
   document.addEventListener('input', e => {
     if(e.target.id==='bank-search'){bankSearch=e.target.value;$('#bank-results').innerHTML=bankResults();}
     if (e.target.id === 'answer-input' && session) {session.draft = e.target.value; persistSession(); const b = $('[data-action="check"]'); if (b) b.disabled = !e.target.value.trim();}
