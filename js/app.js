@@ -247,7 +247,11 @@
     session = {...config, index: 0, responses: [], checked: false, revealed: false, started: Date.now(), draft: '', chosen: '', earned: 0, finished: false};
     lastResult = null; historicalResult = null;
     persistSession();
-    if (location.hash !== '#lesson') location.hash = 'lesson'; else {route = 'lesson'; renderSession();}
+    // Render immediately. Safari on iPad can delay (or omit after a touch) the
+    // hashchange event, which previously left the Home button looking pressed.
+    route = 'lesson';
+    if (location.hash !== '#lesson') location.hash = 'lesson';
+    renderSession();
   }
   function startPractice(mode) {
     const w = D.weeks[practiceWeek - 1];
