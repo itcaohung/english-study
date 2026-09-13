@@ -513,7 +513,19 @@
       case 'add-learner': addLearner(); break;
       case 'learners': if (learnerChosen && !S.conflict) persistSession(); closeModal(); if (location.hash === '#learners') learners(); else location.hash = 'learners'; break;
       case 'reload': location.reload(); break;
-      case 'continue': {historicalResult = null; if (session && !session.finished) {if (location.hash === '#lesson') renderSession(); else location.hash = 'lesson'; break;} const n = nextLesson(S.state.currentWeek, S.state.currentDay); startLesson(n.week, n.day, n.skill); break;}
+      case 'continue': {
+        historicalResult = null;
+        if (session && !session.finished) {
+          // Do not wait for Safari iPad to emit hashchange when resuming a saved lesson.
+          route = 'lesson';
+          if (location.hash !== '#lesson') location.hash = 'lesson';
+          renderSession();
+          break;
+        }
+        const n = nextLesson(S.state.currentWeek, S.state.currentDay);
+        startLesson(n.week, n.day, n.skill);
+        break;
+      }
       case 'lesson': startLesson(Number(week), Number(day), skill); break;
       case 'week': selectedWeek = Number(week); selectedDay = 1; if (location.hash === '#learn') learn(); else location.hash = 'learn'; break;
       case 'select-week': selectedWeek = Number(week); selectedDay = 1; learn(); break;
